@@ -2,14 +2,10 @@
 
 ## Introduction
 
----
-
 From scratch, we would like to conceive, implement, and deploy a mobile application which allows an innovative and dynamic carpooling by sharing your personal car or available seats, whatever your pertaining to a single group or several one, whichever modalities you use (car, foot, bus, train, plane, …), and wherever you are on a territory, especially a territory badly and partially deserved by public transportation.
 Such an application may help manage individual mobility and improve the Global Public Transportation Offer by integrating Individual Vehicles.
 
 ## Project Structure
-
----
 
 ```
 ├── assets
@@ -60,11 +56,7 @@ Such an application may help manage individual mobility and improve the Global P
 
 ## Workflow
 
----
-
 ### Git
-
----
 
 #### Branches
 
@@ -92,37 +84,19 @@ git stash pop
 
 ### Gant Chart
 
----
-
----
-
 ## Architecture
-
----
 
 ### Use Case Diagram
 
----
-
 ### UML
-
----
 
 ### Sequence
 
----
-
 ### Tech
-
----
 
 ### DB Model
 
----
-
 ## Tools
-
----
 
 - [x] [VSCode](https://code.visualstudio.com/) IDE used as a main editor for development
   - [x] [Docker Extension](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker) Extension used to show running container integrated to VSCode
