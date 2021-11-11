@@ -31,17 +31,19 @@ For Windows(consider using WSL or [check this](https://stackoverflow.com/questio
 :warning: **wait arround 5-10 min to build images and run container** :warning:
 
 2. you should get a result that look like this
-   ![results](../assets/result_docker.png)
+   ![results](../docs/assets/media/result_docker.png)
 
 :warning: TIPS :warning:
-- To stop the app run in terminal `docker-compose down`
-- In order to access shell terminal in a specific container `docker-compose exec <container-name> sh` replace `<container-name>` with the containers names below
-    - `app` : laravel app contains (yarn, composer)
-    - `cache`: cache server
-    - `nginx`: web server
-    - `db`: PostgreSQL database
-    - `adminer` : alternative to phpmyadmin (used to administrate DB)
-- In order to run yarn run watch `docker-compose exec app yarn  watch`
+
+-   To stop the app run in terminal `docker-compose down`
+-   In order to access shell terminal in a specific container `docker-compose exec <container-name> sh` replace `<container-name>` with the containers names below
+    -   `app` : laravel app contains (yarn, composer)
+    -   `cache`: cache server
+    -   `nginx`: web server
+    -   `db`: PostgreSQL database
+    -   `adminer` : alternative to phpmyadmin (used to administrate DB)
+-   In order to run yarn run watch `docker-compose exec app yarn watch`
+
 ### Regular Setup
 
 #### Requirements

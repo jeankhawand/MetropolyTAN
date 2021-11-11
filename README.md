@@ -8,47 +8,15 @@ Such an application may help manage individual mobility and improve the Global P
 ## Project Structure
 
 ```
-├── assets
+├── docs
 ├── e2e
 ├── MetropolyTANCore
-│   ├── app
-│   ├── app.dockerfile
-│   ├── artisan
-│   ├── bootstrap
-│   ├── composer.json
-│   ├── composer.lock
-│   ├── config
-│   ├── database
-│   ├── docker-compose.override.yml
-│   ├── docker-compose.yml
 │   ├── Modules
-│   ├── modules_statuses.json
-│   ├── nginx
-│   ├── package.json
-│   ├── phpunit.xml
-│   ├── public
-│   ├── README.md
-│   ├── resources
-│   ├── routes
-│   ├── run.sh
-│   ├── server.php
-│   ├── storage
-│   ├── tests
-│   ├── vendor
-│   └── webpack.mix.js
 ├── metropolytan_mobile
-│   ├── android
-│   ├── ios
-│   ├── lib
-│   ├── metropolytan_mobile.iml
-│   ├── pubspec.lock
-│   ├── pubspec.yaml
-│   ├── README.md
-│   └── test
 └── README.md
 ```
 
-1. `assets` contains all the needed illustration for the project (UML, Sequence, ....)
+1. `docs` contains all the needed illustration for the project (UML, Sequence, ....)
 2. `e2e` contains E2E Testing for QA Automation (Cypress)
 3. `MetropolyTANCore` contains metropolyTAN back office application/API
    - `Modules` represents a small laravel applications offering a de-coupling and clean representation for different app functionalities by applying separation of concerns principal
