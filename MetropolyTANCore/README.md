@@ -9,6 +9,8 @@
 
 :warning: please consider changing `.env.docker.example` to `.env` and find your local User ID and Group ID and replace `USER_ID` and `GROUP_ID` with their values :warning:
 
+##### Align Container User/Group with Host
+
 For Linux and macOS
 
 ```bash
@@ -20,7 +22,11 @@ For Linux and macOS
 
 For Windows(consider using WSL or [check this](https://stackoverflow.com/questions/56290892/get-userid-in-ms-windows-for-uid-and-gid-mapping))
 
-1. make sure you are in the project directory and run
+:warning: **P.S: In case container complains about UserID or GroupID already exists consider creating a group or user and link user with that group and apply commands above (usually newly created User/Group apply higher number ids)** :warning:
+
+---
+
+1- make sure you are in the project directory and run
 
 ```bash
  docker-compose up -d
@@ -30,7 +36,7 @@ For Windows(consider using WSL or [check this](https://stackoverflow.com/questio
 
 :warning: **wait arround 5-10 min to build images and run container** :warning:
 
-2. you should get a result that look like this
+2- you should get a result that look like this
    ![results](../docs/assets/media/result_docker.png)
 
 :warning: TIPS :warning:

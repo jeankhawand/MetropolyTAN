@@ -6,7 +6,6 @@
 .env
 .env.backup
 .phpunit.result.cache
-docker-compose.override.yml
 Homestead.json
 Homestead.yaml
 npm-debug.log
@@ -14,3 +13,6 @@ yarn-error.log
 /.idea
 /.vscode
 Modules/**/node_modules/
+.DS_Store
+public/js/
+public/css/
