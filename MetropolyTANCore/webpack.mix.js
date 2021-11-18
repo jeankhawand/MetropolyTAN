@@ -13,7 +13,7 @@ const glob = require("glob");
  */
 require("laravel-mix-merge-manifest");
 mix.js("resources/js/app.js", "public/js")
-    .js("resources/js/service-workers.js", "public/js")
+    .js("resources/js/service-worker.js", "public")
     .postCss("resources/css/app.css", "public/css", [require("tailwindcss")]);
 let configs = glob.sync("{./Modules/*/webpack.mix.js");
 if (process.env.module !== undefined) {

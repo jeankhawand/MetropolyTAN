@@ -41,15 +41,20 @@ For Windows(consider using WSL or [check this](https://stackoverflow.com/questio
 
 :warning: TIPS :warning:
 
--   To stop the app run in terminal `docker-compose down`
--   In order to access shell terminal in a specific container `docker-compose exec <container-name> sh` replace `<container-name>` with the containers names below
+- To stop the app run in terminal `docker-compose down`
+- In order to access shell terminal in a specific container `docker-compose exec <container-name> sh` replace `<container-name>` with the containers names below
     -   `app` : laravel app contains (yarn, composer)
     -   `cache`: cache server
     -   `nginx`: web server
     -   `db`: PostgreSQL database
     -   `adminer` : alternative to phpmyadmin (used to administrate DB)
--   In order to run yarn run watch `docker-compose exec app yarn watch`
+- In order to run yarn run watch `docker-compose exec app yarn watch`
 
+:warning: Known Issues :warning: \
+1- Service Worker
+- in case you received a console log error related to `An SSL certificate error occurred when fetching the script`
+just launch a new browser with the following command \
+`<browser-binary-path> --ignore-certificate-errors --unsafely-treat-insecure-origin-as-secure=https://localhost --user-data-dir=/tmp/foo`
 ### Regular Setup
 
 #### Requirements

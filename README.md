@@ -66,9 +66,7 @@ git stash pop
 
 ## Tools
 
-- [x] [VSCode](https://code.visualstudio.com/) IDE used as a main editor for development
-  - [x] [Docker Extension](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker) Extension used to show running container integrated to VSCode
-  - [x] [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) Extension used to format code
+- [x] [PhpStorm](https://www.jetbrains.com/phpstorm/) IDE used as a main editor for development
 - [x] [DataGrip](https://www.jetbrains.com/datagrip/) IDE used for database
 - [x] [Diagram Net](https://app.diagrams.net/) used to illustrate diagrams
 - [x] [Microsoft Project](https://www.microsoft.com/en-us/microsoft-365/project/project-management-software) used to organize project life cycle through Gantt Chart and Phases Structure

@@ -5,9 +5,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: "${DB_DATABASE}"
-      POSTGRES_PASSWORD: "${DB_PASSWORD}"
-      POSTGRES_USER: "${DB_USERNAME}"
+      POSTGRES_DB: "${DB_DATABASE:-metropolytancore}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD:-metropolytancore}"
+      POSTGRES_USER: "${DB_USERNAME:-metropolytancore}"
     volumes:
       - type: volume
         source: pgdata
@@ -38,7 +38,7 @@ services:
       - 443:443
     volumes:
       - .:/var/www
-      - ./nginx:/etc/nginx/conf.d/
+      - ./nginx/local:/etc/nginx/conf.d/
 
 volumes:
   pgdata:
