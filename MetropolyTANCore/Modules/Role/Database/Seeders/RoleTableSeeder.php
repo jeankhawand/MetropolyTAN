@@ -5,6 +5,8 @@ namespace Modules\Role\Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 
+use Modules\Role\Entities\RoleVar;
+use Modules\Role\Entities\UserPermission;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -25,18 +27,18 @@ class RoleTableSeeder extends Seeder
         /////////////////////////////////////////////////////////////////
         /// Roles
         /////////////////////////////////////////////////////////////////
-        $roleAdmin = Role::create(['name' => 'admin']);
-        $roleOperator = Role::create(['name' => 'operator']);
-        $roleTeleOperator = Role::create(['name' => 'teleoperator']);
-        $roleDriver = Role::create(['name' => 'driver']);
-        $rolePassenger = Role::create(['name' => 'passenger']);
+        $roleAdmin = Role::create(['name' => RoleVar::ADMIN]);
+        $roleOperator = Role::create(['name' => RoleVar::OPERATOR]);
+        $roleTeleOperator = Role::create(['name' => RoleVar::TELEOPERATOR]);
+        $roleDriver = Role::create(['name' => RoleVar::DRIVER]);
+        $rolePassenger = Role::create(['name' => RoleVar::PASSENGER]);
         /////////////////////////////////////////////////////////////////
         /// Permission
         /////////////////////////////////////////////////////////////////
-        $permissionCreateUser = Permission::create(['name' => 'user:create']);
-        $permissionReadUser = Permission::create(['name' => 'user:read']);
-        $permissionUpdateUser = Permission::create(['name' => 'user:update']);
-        $permissionDeleteUser = Permission::create(['name' => 'user:delete']);
+        $permissionCreateUser = Permission::create(['name' => UserPermission::create]);
+        $permissionReadUser = Permission::create(['name' => UserPermission::read]);
+        $permissionUpdateUser = Permission::create(['name' => UserPermission::update]);
+        $permissionDeleteUser = Permission::create(['name' => UserPermission::delete]);
         /////////////////////////////////////////////////////////////////
         /// TeleOperator Permission
         /////////////////////////////////////////////////////////////////
