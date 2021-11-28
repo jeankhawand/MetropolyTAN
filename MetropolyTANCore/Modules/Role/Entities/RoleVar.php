@@ -9,4 +9,5 @@ abstract class RoleVar
     const TELEOPERATOR = "teleoperator";
     const PASSENGER = "passenger";
     const DRIVER = "driver";
+    const AUTHORITATIVEPUBLICTRANSPORTATIONORGANIZER = "apto";
 }

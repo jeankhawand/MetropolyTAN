@@ -1,9 +1,4 @@
-@extends('user::layouts.master')
-
-@section('content')
-    <h1>Hello World</h1>
-
-    <p>
-        This view is loaded from module: {!! config('user.name') !!}
-    </p>
+@extends('dashboard::layouts.dashboard')
+@section('dashboard-content')
+    @livewire('user-table')
 @endsection

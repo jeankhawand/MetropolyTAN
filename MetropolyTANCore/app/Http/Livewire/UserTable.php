@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use Illuminate\Database\QueryException;
+use Modules\Role\Entities\RoleVar;
 use Modules\User\Entities\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -42,7 +43,12 @@ class UserTable extends PowerGridComponent
     */
     public function datasource(): ?Builder
     {
-        return User::query();
+        if (auth()->user()->hasRole(RoleVar::ADMIN)) {
+            return User::query()->where('id', '!=', auth()->user()->id)->where('id', '!=', User::role('admin')->get()[0]->id)->with('roles');
+        } else {
+            return User::query()->where('id', '!=', auth()->user()->id)->where('id', '!=', User::role('admin')->get()[0]->id);
+        }
+
     }
 
     /*
@@ -73,7 +79,7 @@ class UserTable extends PowerGridComponent
             ->addColumn('created_at')
             ->addColumn('address')
             ->addColumn('email_verified_at_formatted', function (User $model) {
-                return isset($model->email_verified_at) ? 'yes': 'no';
+                return isset($model->email_verified_at) ? 'yes' : 'no';
             })
             ->addColumn('created_at_formatted', function (User $model) {
                 return Carbon::parse($model->created_at)->format('d/m/Y H:i:s');
@@ -101,13 +107,14 @@ class UserTable extends PowerGridComponent
                 ->title(__('Name'))
                 ->field('name')
                 ->searchable()
-//                ->editOnClick(auth()->can('user:edit'))
+                ->editOnClick(auth()->user()->hasAnyPermission(['users.*','users.update']))
                 ->makeInputText('name')
                 ->sortable(),
             Column::add()
                 ->title(__('Address'))
                 ->field('address')
                 ->searchable()
+                ->editOnClick(auth()->user()->hasAnyPermission(['users.*','users.update']))
                 ->makeInputText('address')
                 ->sortable(),
             Column::add()
@@ -136,12 +143,27 @@ class UserTable extends PowerGridComponent
 
     public function actions(): array
     {
-       return [
-           Button::add('user-details')
-               ->caption(__('Details'))
-               ->class('bg-indigo-500 text-white')
-               ->openModal('user-details',[]),
-        ];
+        if (auth()->user()->hasPermissionTo("users.*")) {
+            return [
+                Button::add('user-details')
+                    ->caption(__('Details'))
+                    ->class('bg-indigo-500 text-white')
+                    ->openModal('user-details', []),
+                Button::add('user-delete')
+                    ->caption(__('Details'))
+                    ->class('bg-indigo-500 text-white')
+                    ->route('user.delete', ['id'=>'id']),
+
+            ];
+        } else {
+            return [
+                Button::add('user-details')
+                    ->caption(__('Details'))
+                    ->class('bg-indigo-500 text-white')
+                    ->openModal('user-details', []),
+            ];
+        }
+
     }
 
 
@@ -155,22 +177,22 @@ class UserTable extends PowerGridComponent
     */
 
 
-    public function update(array $data ): bool
+    public function update(array $data): bool
     {
-       try {
-           $updated = User::query()->find($data['id'])->update([
+        try {
+            $updated = User::query()->find($data['id'])->update([
                 $data['field'] => $data['value']
-           ]);
-       } catch (QueryException $exception) {
-           $updated = false;
-       }
-       return $updated;
+            ]);
+        } catch (QueryException $exception) {
+            $updated = false;
+        }
+        return $updated;
     }
 
     public function updateMessages(string $status, string $field = '_default_message'): string
     {
         $updateMessages = [
-            'success'   => [
+            'success' => [
                 '_default_message' => __('Data has been updated successfully!'),
                 //'custom_field' => __('Custom Field updated successfully!'),
             ],

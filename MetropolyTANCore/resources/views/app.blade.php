@@ -8,6 +8,7 @@
     <meta name="application-name" content="{{config('app.name')}}">
     <meta name="theme-color" content="#4285f4">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/font-awesome-line-awesome/css/all.min.css">
     @livewireStyles
     @powerGridStyles
     @hasSection('title')
@@ -30,6 +31,7 @@
 </head>
 
 <body>
+<i class="lab la-accessible-icon"></i>
     @yield('content')
     @livewireScripts
     @powerGridScripts

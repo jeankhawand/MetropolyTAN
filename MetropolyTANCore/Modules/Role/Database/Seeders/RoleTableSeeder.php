@@ -5,8 +5,8 @@ namespace Modules\Role\Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 
+use Modules\Role\Entities\PermissionVar;
 use Modules\Role\Entities\RoleVar;
-use Modules\Role\Entities\UserPermission;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -32,24 +32,16 @@ class RoleTableSeeder extends Seeder
         $roleTeleOperator = Role::create(['name' => RoleVar::TELEOPERATOR]);
         $roleDriver = Role::create(['name' => RoleVar::DRIVER]);
         $rolePassenger = Role::create(['name' => RoleVar::PASSENGER]);
+        $roleApto = Role::create(['name' => RoleVar::AUTHORITATIVEPUBLICTRANSPORTATIONORGANIZER]);
         /////////////////////////////////////////////////////////////////
-        /// Permission
+        /// Permissions
         /////////////////////////////////////////////////////////////////
-        $permissionCreateUser = Permission::create(['name' => UserPermission::create]);
-        $permissionReadUser = Permission::create(['name' => UserPermission::read]);
-        $permissionUpdateUser = Permission::create(['name' => UserPermission::update]);
-        $permissionDeleteUser = Permission::create(['name' => UserPermission::delete]);
+        $userPermission = Permission::create(['name' => PermissionVar::USER.".*"]);
+        $rolePermission = Permission::create(['name' => PermissionVar::ROLE.".*"]);
         /////////////////////////////////////////////////////////////////
-        /// TeleOperator Permission
+        /// Teleoperator Permissions
         /////////////////////////////////////////////////////////////////
-        $permissionUpdateUser->assignRole($roleTeleOperator);
-        $permissionReadUser->assignRole($roleTeleOperator);
-        /////////////////////////////////////////////////////////////////
-        /// Admin Permission
-        /////////////////////////////////////////////////////////////////
-        $permissionCreateUser->assignRole($roleAdmin);
-        $permissionReadUser->assignRole($roleAdmin);
-        $permissionUpdateUser->assignRole($roleAdmin);
-        $permissionDeleteUser->assignRole($roleAdmin);
+        $teleoperatorPermission = Permission::create(['name' => PermissionVar::USER.'.create,update,read']);
+        $roleTeleOperator->givePermissionTo($teleoperatorPermission);
     }
 }
