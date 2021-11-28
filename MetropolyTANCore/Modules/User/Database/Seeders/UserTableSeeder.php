@@ -2,9 +2,9 @@
 
 namespace Modules\User\Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Modules\User\Entities\User;
 
 class UserTableSeeder extends Seeder
 {
@@ -19,14 +19,14 @@ class UserTableSeeder extends Seeder
         $admin = new User;
         $admin->name = 'Jean Khawand';
         $admin->address = 'Achrafiyyeh, Sioufi';
-        $admin->email = 'pierrotwehbe@gmail.com';
+        $admin->email = 'jeankhawand@gmail.com';
         $admin->password = Hash::make('123');
         $admin->assignRole('admin');
         $admin->save();
 
         // Create 5 employees
-        User::factory(5)->create()->each(function ($employee) {
-            $employee->assignRole('clients');
+        User::factory(5)->create()->each(function ($passenger) {
+            $passenger->assignRole('passenger');
         });
     }
 }

@@ -9,6 +9,7 @@
     <meta name="theme-color" content="#4285f4">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     @livewireStyles
+    @powerGridStyles
     @hasSection('title')
     <title>MetropolyTAN - @yield('title')</title>
     @else
@@ -31,6 +32,8 @@
 <body>
     @yield('content')
     @livewireScripts
+    @powerGridScripts
+    @livewire('livewire-ui-modal')
     <script src="{{ asset('js/app.js') }}"></script>
     <script src="https://js.pusher.com/beams/1.0/push-notifications-cdn.js"></script>
     <script>
