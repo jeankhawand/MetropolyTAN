@@ -32,6 +32,7 @@
             });
         }
     </script>
+    @stack('styles')
 </head>
 
 <body>
@@ -55,5 +56,5 @@
             .catch(console.error);
     </script>
 @endauth
-
+@stack('scripts')
 </html>
