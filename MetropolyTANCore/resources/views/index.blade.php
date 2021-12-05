@@ -5,6 +5,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href='https://api.mapbox.com/mapbox-gl-js/v2.6.0/mapbox-gl.css' rel='stylesheet' />
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css" type="text/css">
     <style>
         body{
             font-family: 'Outfit', sans-serif;
@@ -64,8 +65,31 @@
         .result-details .details:first-child > span:nth-child(2)::after{
             top: 50%;
         }
-        .result-details .details:last-child > span:nth-child(2)::after{
+        .result-details .details:nth-child(2) > span:nth-child(2)::after{
             bottom: 50%;
+        }
+
+        .collapse-details{
+            max-height:0;
+            overflow: hidden;
+            transition: max-height 0.75s linear 0s;
+        }
+        .collapse-details.open{
+            max-height: 500px;
+            transition: max-height 0.75s linear 0s;
+        }
+
+        .result-details > div:first-child > div:nth-child(2){
+            width:100px;
+        }
+
+        .more-info > span{
+            transform-origin: center 58%;
+            transition: transform 0.25s linear;
+        }
+        
+        .more-info.active > span{
+            transform: rotateZ(180deg);
         }
     </style>
 @endpush
@@ -98,11 +122,11 @@
         <div id="map" class="w-full h-screen"></div>
     </main>
   
-    <div id="search" class="fixed bg-gray-500 bg-opacity-50 inset-0 z-30 flex items-center justify-center drop-shadow-md hidden">
+    <div id="search" class="fixed bg-gray-500 bg-opacity-50 inset-0 z-40 flex items-center justify-center drop-shadow-md hidden">
         <div class="absolute inset-0 z-0"></div>
         <div class="bg-white md:w-1/3 w-11/12 p-5 rounded-3xl z-10">
             <form>
-                <div class="mb-4">
+                <div class="mb-4 mapbox-search">
                     <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="from" type="text" placeholder="From" required>
                 </div>
                 <div class="mb-4 flex">
@@ -149,37 +173,18 @@
         </div>
     </div>
 
-    <div id="results" class="fixed inset-x-0 bottom-0 bg-gray-500 z-30 rounded-t-3xl transform transition delay-75 translate-y-full p-5 active">
+    <div id="results" class="fixed inset-x-0 bottom-0 bg-gray-500 z-30 rounded-t-3xl transform transition delay-75 translate-y-full p-5">
         <div class="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            <div class="rounded bg-white bg-opacity-50 p-3 result-details">
-                <div class="w-full flex text-white">
-                    <div class="flex flex-col flex-grow">
-                        <div class="flex py-2 details">
-                            <p class="m-0">09:30</p>
-                            <span class="relative inline-flex mx-4"></span>
-                            <p class="flex-grow m-0">Montbéliard</p>
-                        </div>
-                        <div class="flex py-2 details">
-                            <p class="m-0">10:30</p>
-                            <span class="relative inline-flex mx-4"></span>
-                            <p class="flex-grow m-0">Belfort</p>
-                        </div>
-                        <div class="flex py-2 details">
-                            <p class="m-0">11:45</p>
-                            <span class="relative inline-flex mx-4"></span>
-                            <p class="flex-grow m-0">Strasbourg</p>
-                        </div>
-                    </div>
-                    <div><b>23.00 &euro;</b></div>
-                </div>
-            </div>
+           @include('components.card',['data' => 'Jean Khawand'])
         </div>
     </div>
 @endsection
 
 @push('scripts')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    
     <script src='https://api.mapbox.com/mapbox-gl-js/v2.6.0/mapbox-gl.js'></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
     <script>
         mapboxgl.accessToken = 'pk.eyJ1IjoicWF1bnR1bTk1NSIsImEiOiJja3RsdXQ3aG0wYjN0MndzNHh3bmNwZHF5In0.u4fqOWocyXyeUeCA3tUHUw';
         const map = new mapboxgl.Map({
@@ -187,6 +192,15 @@
             style: 'mapbox://styles/mapbox/navigation-night-v1',
             center: [6.818934,47.510879],
             zoom: 12
+        });
+
+        const geocoder = new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl
+        });
+
+        $(document).ready(function(){
+            // $('.mapbox-search').append(geocoder.onAdd(map));
         });
 
         $(document).on('click','#search > div:first-child, #open-search',function(){
@@ -228,6 +242,12 @@
             e.preventDefault();
             $('#search').toggleClass('hidden');
             $('#results').addClass('active');
+        });
+
+        $(document).on('click','.more-info',function(e){
+            e.preventDefault();
+            $(this).toggleClass('active');
+            $(this).next().toggleClass('open');
         });
     </script>
 @endpush

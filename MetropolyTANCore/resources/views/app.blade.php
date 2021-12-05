@@ -56,5 +56,5 @@
             .catch(console.error);
     </script>
 @endauth
-
+@stack('scripts')
 </html>
