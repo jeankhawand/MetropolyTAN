@@ -14,5 +14,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+    session()->flash('warning',"some text");
     return view('index');
 });

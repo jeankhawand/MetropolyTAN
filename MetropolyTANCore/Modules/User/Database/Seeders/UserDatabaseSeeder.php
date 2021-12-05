@@ -3,7 +3,6 @@
 namespace Modules\User\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Eloquent\Model;
 
 class UserDatabaseSeeder extends Seeder
 {
@@ -16,7 +15,7 @@ class UserDatabaseSeeder extends Seeder
     {
 
          $this->call([
-
+                UserTableSeeder::class
          ]);
     }
 }

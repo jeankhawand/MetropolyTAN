@@ -4,6 +4,10 @@ namespace Modules\Role\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
+
+use Modules\Role\Entities\PermissionVar;
+use Modules\Role\Entities\RoleVar;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
@@ -20,12 +24,24 @@ class RoleTableSeeder extends Seeder
 
         // Reset cached roles and permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
-        // Create a set of roles
-        // Roles name must be lower case
-        $roleAdmin = Role::create(['name' => 'admin']);
-        $roleOperator = Role::create(['name' => 'operator']);
-        $roleTeleOperator = Role::create(['name' => 'teleoperator']);
-        $roleDriver = Role::create(['name' => 'driver']);
-        $rolePassenger = Role::create(['name' => 'passenger']);
+        /////////////////////////////////////////////////////////////////
+        /// Roles
+        /////////////////////////////////////////////////////////////////
+        $roleAdmin = Role::create(['name' => RoleVar::ADMIN]);
+        $roleOperator = Role::create(['name' => RoleVar::OPERATOR]);
+        $roleTeleOperator = Role::create(['name' => RoleVar::TELEOPERATOR]);
+        $roleDriver = Role::create(['name' => RoleVar::DRIVER]);
+        $rolePassenger = Role::create(['name' => RoleVar::PASSENGER]);
+        $roleApto = Role::create(['name' => RoleVar::AUTHORITATIVEPUBLICTRANSPORTATIONORGANIZER]);
+        /////////////////////////////////////////////////////////////////
+        /// Permissions
+        /////////////////////////////////////////////////////////////////
+        $userPermission = Permission::create(['name' => PermissionVar::USER.".*"]);
+        $rolePermission = Permission::create(['name' => PermissionVar::ROLE.".*"]);
+        /////////////////////////////////////////////////////////////////
+        /// Teleoperator Permissions
+        /////////////////////////////////////////////////////////////////
+        $teleoperatorPermission = Permission::create(['name' => PermissionVar::USER.'.create,update,read']);
+        $roleTeleOperator->givePermissionTo($teleoperatorPermission);
     }
 }

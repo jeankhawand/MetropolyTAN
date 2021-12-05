@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Modules\Role\Entities\RoleVar;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -24,7 +25,9 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-
-        //
+        // allow admin to have full access
+        Gate::before(function ($user, $ability) {
+            return $user->hasRole(RoleVar::ADMIN) ? true : null;
+        });
     }
 }

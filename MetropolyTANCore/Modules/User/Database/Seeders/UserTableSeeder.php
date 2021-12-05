@@ -2,9 +2,10 @@
 
 namespace Modules\User\Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Modules\Role\Entities\RoleVar;
+use Modules\User\Entities\User;
 
 class UserTableSeeder extends Seeder
 {
@@ -16,17 +17,42 @@ class UserTableSeeder extends Seeder
     public function run()
     {
         // Create admin
-        $admin = new User;
-        $admin->name = 'Jean Khawand';
-        $admin->address = 'Achrafiyyeh, Sioufi';
-        $admin->email = 'pierrotwehbe@gmail.com';
-        $admin->password = Hash::make('123');
-        $admin->assignRole('admin');
-        $admin->save();
+        $admin = User::factory()->create([
+            'name'=>"Admin",
+            'email'=>"admin@example.com"
+        ]);
+        $admin->assignRole(RoleVar::ADMIN);
 
-        // Create 5 employees
-        User::factory(5)->create()->each(function ($employee) {
-            $employee->assignRole('clients');
-        });
+        // Create Passenger
+        $passenger = User::factory()->create([
+            'name'=>"Passenger",
+            'email'=>"passenger@example.com"
+        ]);
+        $passenger->assignRole(RoleVar::PASSENGER);
+        // Create Driver
+        $driver = User::factory()->create([
+            'name'=>"Driver",
+            'email'=>"driver@example.com"
+        ]);
+        $driver->assignRole(RoleVar::DRIVER);
+        // Create Teleoperator
+        $teleoperator = User::factory()->create([
+            'name'=>"Teleoperator",
+            'email'=>"teleoperator@example.com"
+        ]);
+        $teleoperator->assignRole(RoleVar::TELEOPERATOR);
+        // Create Operator
+        $operator = User::factory()->create([
+            'name'=>"Operator",
+            'email'=>"operator@example.com"
+        ]);
+        $operator->assignRole(RoleVar::OPERATOR);
+        // Create AUTHORITATIVE PUBLIC TRANSPORTATION ORGANIZER
+        $apto = User::factory()->create([
+            'name'=>"APTO",
+            'email'=>"apto@example.com"
+        ]);
+        $apto->assignRole(RoleVar::AUTHORITATIVEPUBLICTRANSPORTATIONORGANIZER);
+
     }
 }

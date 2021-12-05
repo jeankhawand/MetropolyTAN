@@ -9,6 +9,12 @@
     <meta name="theme-color" content="#4285f4">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     @livewireStyles
+    @powerGridStyles
+    @bukStyles
+{{--    @hasexactroles('teleoperator|operator|admin|apto')--}}
+{{--    @dd("reached")--}}
+{{--    @powerGridStyles--}}
+{{--    @endhasexactroles--}}
     @hasSection('title')
     <title>MetropolyTAN - @yield('title')</title>
     @else
@@ -31,8 +37,13 @@
 
 <body>
     @yield('content')
-    @livewireScripts
-    <script src="{{ asset('js/app.js') }}"></script>
+</body>
+@livewireScripts
+@livewire('livewire-ui-modal')
+@powerGridScripts
+@bukScripts
+<script src="{{ asset('js/app.js') }}"></script>
+@auth
     <script src="https://js.pusher.com/beams/1.0/push-notifications-cdn.js"></script>
     <script>
         const beamsClient = new PusherPushNotifications.Client({
@@ -44,10 +55,6 @@
             .then(() => console.log('Successfully registered and subscribed!'))
             .catch(console.error);
     </script>
-    @auth
-        <script src="https://js.pusher.com/beams/1.0/push-notifications-cdn.js"></script>
-    @endauth
-    @stack('scripts')
-</body>
+@endauth
 
 </html>
