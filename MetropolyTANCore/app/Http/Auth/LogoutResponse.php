@@ -12,13 +12,7 @@ class LogoutResponse implements LogoutResponseContract
      */
     public function toResponse($request)
     {
-        ddd(auth()->user());
-        if(auth()->user()->hasRole(RoleVar::DRIVER) || auth()->user()->hasRole(RoleVar::PASSENGER)){
-            $home = '/';
-        }else{
-            $home = '/login';
-        }
 
-        return redirect()->intended($home);
+        return redirect()->intended('/login');
     }
 }
