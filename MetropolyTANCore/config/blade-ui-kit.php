@@ -1,5 +1,6 @@
 <?php
 
+use App\View\Components\Mapbox;
 use BladeUIKit\Components;
 
 return [
@@ -34,7 +35,7 @@ return [
         'input' => Components\Forms\Inputs\Input::class,
         'label' => Components\Forms\Label::class,
         'logout' => Components\Buttons\Logout::class,
-        'mapbox' => Components\Maps\Mapbox::class,
+        'mapbox' => Mapbox::class,
         'markdown' => Components\Markdown\Markdown::class,
         'password' => Components\Forms\Inputs\Password::class,
         'pikaday' => Components\Forms\Inputs\Pikaday::class,

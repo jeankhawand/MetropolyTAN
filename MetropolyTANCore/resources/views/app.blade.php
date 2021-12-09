@@ -9,12 +9,10 @@
     <meta name="theme-color" content="#4285f4">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     @livewireStyles
-    @powerGridStyles
     @bukStyles
-{{--    @hasexactroles('teleoperator|operator|admin|apto')--}}
-{{--    @dd("reached")--}}
-{{--    @powerGridStyles--}}
-{{--    @endhasexactroles--}}
+    @hasanyrole('teleoperator|operator|admin|apto')
+    @powerGridStyles
+    @endhasanyrole
     @hasSection('title')
     <title>MetropolyTAN - @yield('title')</title>
     @else
@@ -40,7 +38,9 @@
 </body>
 @livewireScripts
 @livewire('livewire-ui-modal')
+@hasanyrole('teleoperator|operator|admin|apto')
 @powerGridScripts
+@endhasanyrole
 @bukScripts
 <script src="{{ asset('js/app.js') }}"></script>
 @auth
