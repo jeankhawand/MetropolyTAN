@@ -53,6 +53,11 @@ class UserTableSeeder extends Seeder
             'email'=>"apto@example.com"
         ]);
         $apto->assignRole(RoleVar::AUTHORITATIVEPUBLICTRANSPORTATIONORGANIZER);
+        // Create 5 passengers & Drivers
+        User::factory(5)->create()->each(function ($passengersdrivers) {
 
+            $passengersdrivers->assignRole(RoleVar::PASSENGER);
+            $passengersdrivers->assignRole(RoleVar::DRIVER);
+        });
     }
 }

@@ -13,6 +13,7 @@ use PowerComponents\LivewirePowerGrid\PowerGrid;
 use PowerComponents\LivewirePowerGrid\PowerGridEloquent;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\ActionButton;
+use Spatie\Permission\Models\Role;
 
 class UserTable extends PowerGridComponent
 {
@@ -29,7 +30,6 @@ class UserTable extends PowerGridComponent
     {
         $this->showCheckBox()
             ->showPerPage()
-            ->showToggleColumns()
             ->showExportOption('download', ['excel', 'csv'])
             ->showSearchInput();
     }
@@ -44,9 +44,16 @@ class UserTable extends PowerGridComponent
     public function datasource(): ?Builder
     {
         if (auth()->user()->hasRole(RoleVar::ADMIN)) {
-            return User::query()->where('id', '!=', auth()->user()->id)->where('id', '!=', User::role('admin')->get()[0]->id)->with('roles');
+            return User::query()
+                ->where('id', '!=', auth()->user()->id)
+                ->where('id', '!=', User::role('admin')->get()[0]->id)
+                ->with('roles');
         } else {
-            return User::query()->where('id', '!=', auth()->user()->id)->where('id', '!=', User::role('admin')->get()[0]->id);
+            return User::query()
+                ->where('id', '!=', auth()->user()->id)
+                ->where('id', '!=', User::role('admin')->get()[0]->id)
+
+                ;
         }
 
     }
@@ -60,7 +67,11 @@ class UserTable extends PowerGridComponent
     */
     public function relationSearch(): array
     {
-        return [];
+        return [
+            'roles' => [ // relationship on dishes model
+                'name', // column enabled to search
+            ],
+        ];
     }
 
     /*
@@ -73,17 +84,28 @@ class UserTable extends PowerGridComponent
     */
     public function addColumns(): ?PowerGridEloquent
     {
-        return PowerGrid::eloquent()
-            ->addColumn('id')
-            ->addColumn('name')
-            ->addColumn('created_at')
-            ->addColumn('address')
-            ->addColumn('email_verified_at_formatted', function (User $model) {
-                return isset($model->email_verified_at) ? 'yes' : 'no';
-            })
-            ->addColumn('created_at_formatted', function (User $model) {
-                return Carbon::parse($model->created_at)->format('d/m/Y H:i:s');
-            });
+        if (auth()->user()->hasRole(RoleVar::ADMIN)) {
+            return PowerGrid::eloquent()
+                ->addColumn('name')
+                ->addColumn('email')
+                ->addColumn('role')
+                ->addColumn('email_verified_at_formatted', function (User $model) {
+                    return isset($model->email_verified_at) ? 'YES' : 'NO';
+                })
+                ->addColumn('created_at_formatted', function (User $model) {
+                    return Carbon::parse($model->created_at)->format('d/m/Y H:i:s');
+                });
+        } else {
+            return PowerGrid::eloquent()
+                ->addColumn('name')
+                ->addColumn('email')
+                ->addColumn('email_verified_at_formatted', function (User $model) {
+                    return isset($model->email_verified_at) ? 'YES' : 'NO';
+                })
+                ->addColumn('created_at_formatted', function (User $model) {
+                    return Carbon::parse($model->created_at)->format('d/m/Y H:i:s');
+                });
+        }
     }
 
     /*
@@ -96,40 +118,56 @@ class UserTable extends PowerGridComponent
     */
     public function columns(): array
     {
-        return [
-            Column::add()
-                ->title(__('ID'))
-                ->field('id')
-                ->searchable()
-                ->sortable(),
+        if (auth()->user()->hasRole(RoleVar::ADMIN)) {
+            return [
+                Column::add()
+                    ->title(__('Name'))
+                    ->field('name')
+                    ->searchable()
+                    ->editOnClick(auth()->user()->can('users.*') || auth()->user()->can('users.update,create'))
+                    ->makeInputText('name')
+                    ->sortable(),
+                Column::add()
+                    ->title(__('Email'))
+                    ->field('email')
+                    ->searchable()
+                    ->editOnClick(auth()->user()->can('users.*') || auth()->user()->can('users.update,create'))
+                    ->makeInputText('email')
+                    ->sortable(),
+//                Column::add()
+//                    ->title(__('Role'))
+//                    ->field('roles')
+//                    ->searchable()
+//                    ->editOnClick(auth()->user()->can('users.*') || auth()->user()->can('users.update,create'))
+//                    ->makeInputMultiSelect(Role::all(),'roles.name','roles.id')
+//                    ->sortable(),
+                Column::add()
+                    ->title(__('Verified'))
+                    ->field('email_verified_at_formatted')
+            ];
 
-            Column::add()
-                ->title(__('Name'))
-                ->field('name')
-                ->searchable()
-                ->editOnClick(auth()->user()->hasAnyPermission(['users.*','users.update']))
-                ->makeInputText('name')
-                ->sortable(),
-            Column::add()
-                ->title(__('Address'))
-                ->field('address')
-                ->searchable()
-                ->editOnClick(auth()->user()->hasAnyPermission(['users.*','users.update']))
-                ->makeInputText('address')
-                ->sortable(),
-            Column::add()
-                ->title(__('Created at'))
-                ->field('created_at')
-                ->hidden(),
-            Column::add()
-                ->title(__('Created at'))
-                ->field('created_at_formatted')
-                ->makeInputDatePicker('created_at')
-                ->searchable(),
-            Column::add()
-                ->title(__('Verified'))
-                ->field('email_verified_at_formatted')
-        ];
+        } else {
+            return [
+                Column::add()
+                    ->title(__('Name'))
+                    ->field('name')
+                    ->searchable()
+                    ->editOnClick(auth()->user()->can('users.*') || auth()->user()->can('users.update,create'))
+                    ->makeInputText('name')
+                    ->sortable(),
+                Column::add()
+                    ->title(__('Email'))
+                    ->field('email')
+                    ->searchable()
+                    ->editOnClick(auth()->user()->can('users.*') || auth()->user()->can('users.update,create'))
+                    ->makeInputText('email')
+                    ->sortable(),
+                Column::add()
+                    ->title(__('Verified'))
+                    ->field('email_verified_at_formatted')
+            ];
+        }
+
     }
 
     /*
@@ -143,16 +181,16 @@ class UserTable extends PowerGridComponent
 
     public function actions(): array
     {
-        if (auth()->user()->hasPermissionTo("users.*")) {
+        if (auth()->user()->can("users.*")) {
             return [
                 Button::add('user-details')
                     ->caption(__('Details'))
                     ->class('bg-indigo-500 text-white')
-                    ->openModal('user-details', []),
+                    ->openModal('user-details', ['user' => 'id']),
                 Button::add('user-delete')
-                    ->caption(__('Details'))
-                    ->class('bg-indigo-500 text-white')
-                    ->route('user.delete', ['id'=>'id']),
+                    ->caption(__('Delete'))
+                    ->class('bg-red-500 text-white')
+                    ->route('user.delete', ['user' => 'id']),
 
             ];
         } else {
@@ -160,7 +198,7 @@ class UserTable extends PowerGridComponent
                 Button::add('user-details')
                     ->caption(__('Details'))
                     ->class('bg-indigo-500 text-white')
-                    ->openModal('user-details', []),
+                    ->openModal('user-details', ['user' => 'id']),
             ];
         }
 

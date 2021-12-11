@@ -5,7 +5,12 @@ module.exports = {
     ],
     theme:{
         extend:{
-            
+            width: {
+                '55':'55px'
+            },
+            backgroundImage: {
+                
+            }
         }
     }
 }

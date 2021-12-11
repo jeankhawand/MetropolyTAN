@@ -1,7 +1,16 @@
-<a href="#" class="flex items-center px-4 py-3 border-b hover:bg-gray-100 -mx-2">
-
-    <img class="h-8 w-8 rounded-full object-cover mx-1" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80" alt="avatar">
-    <p class="text-gray-600 text-sm mx-2">
-        <span class="font-bold" href="#">Sara Salah</span> replied on the <span class="font-bold text-blue-500" href="#">Upload Image</span> artical . 2m
+<div href="#" class="flex items-center px-4 py-3 border-b hover:bg-gray-100">
+    <p class="text-gray-600 text-xs px-2 flex-grow">
+        Jean Khawand posted a new itinerary. <br/><b>2m ago</b>
     </p>
-</a>
+    <a href="#" class="rounded bg-blue-300 text-white text-xs px-2 py-1 hover:bg-blue-500">
+        Details
+    </a>
+</div>
+<div href="#" class="flex items-center px-4 py-3 border-b hover:bg-gray-100">
+    <p class="text-gray-600 text-xs px-2 flex-grow">
+        Jean Rizk requested an itinerary. <br/><b>3m ago</b>
+    </p>
+    <a href="#" class="rounded bg-blue-300 text-white text-xs px-2 py-1 hover:bg-blue-500">
+        Details
+    </a>
+</div>
