@@ -134,13 +134,13 @@ class UserTable extends PowerGridComponent
                     ->editOnClick(auth()->user()->can('users.*') || auth()->user()->can('users.update,create'))
                     ->makeInputText('email')
                     ->sortable(),
-                Column::add()
-                    ->title(__('Role'))
-                    ->field('roles')
-                    ->searchable()
-                    ->editOnClick(auth()->user()->can('users.*') || auth()->user()->can('users.update,create'))
-                    ->makeInputMultiSelect(Role::all(),'roles.name','roles.id')
-                    ->sortable(),
+//                Column::add()
+//                    ->title(__('Role'))
+//                    ->field('roles')
+//                    ->searchable()
+//                    ->editOnClick(auth()->user()->can('users.*') || auth()->user()->can('users.update,create'))
+//                    ->makeInputMultiSelect(Role::all(),'roles.name','roles.id')
+//                    ->sortable(),
                 Column::add()
                     ->title(__('Verified'))
                     ->field('email_verified_at_formatted')
