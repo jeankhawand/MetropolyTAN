@@ -33,6 +33,31 @@
     <hr class="my-4"/>
     {{-- The following block will be displayed if the user has a registered car --}}
     <div>
+        <h3 class="font-bold mb-2">Subscriptions & Tickets</h3>
+        <div class="grid grid-cols-3">
+            <div class="flex col-span-2">
+                <ul class="style-none">
+                    <li><b>Available Tickets</b></li>
+                    <li><b>Subscription Details</b></li>
+                </ul>
+                <ul class="style-none pl-3">
+                    <li>x3 <x-heroicon-o-ticket class="inline w-5 h-5"/></li>
+                    <li>Monthly Subscription<br/>Student<br/><b>&euro;25.00</b></li>
+                </ul>
+            </div>
+            <div class="flex flex-col justify-end items-end text-xs">
+                <div>
+                    <button class="px-3 py-2 bg-green-400 hover:bg-green-500 text-white font-bold rounded mb-2">Edit Tickets</button>
+                </div>
+                <div>
+                    <button class="px-3 py-2 bg-green-400 hover:bg-green-500 text-white font-bold rounded mb-2">Edit subscirption</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr class="my-4"/>
+    {{-- The following block will be displayed if the user has a registered car --}}
+    <div>
         <h3 class="font-bold mb-2">Car Information</h3>
         <div class="grid md:grid-cols-4 grid-cols-1 items-stretch">
             <div class="car-image h-full flex items-center justify-center bg-default-user">
@@ -54,6 +79,7 @@
                     </ul>
                 </div>
             </div>
+            <x-mapbox class="col-span-4 mt-2" style="height:200px;"/>
         </div>
     </div>
     <hr class="my-4"/>
