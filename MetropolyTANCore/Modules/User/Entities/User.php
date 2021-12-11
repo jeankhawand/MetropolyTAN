@@ -6,8 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Modules\Role\Entities\RoleVar;
 use Modules\User\Database\factories\UserFactory;
 use Spatie\Permission\Traits\HasRoles;
+
 class User extends Authenticatable implements Wallet
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles, HasWallet;
@@ -41,8 +43,15 @@ class User extends Authenticatable implements Wallet
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    /**
+     * @return UserFactory
+     */
     protected static function newFactory()
     {
         return UserFactory::new();
+    }
+    public function getGravatarUrlAttribute(): string
+    {
+        return "https://www.gravatar.com/avatar/".md5(strtolower(trim($this->email)));
     }
 }

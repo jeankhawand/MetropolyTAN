@@ -24,7 +24,7 @@
 
         <a href="#" class="block relative">
             <img alt="profil"
-                 src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.7FTrJ0AZNspwAi5Jhco06QHaHa%26pid%3DApi&f=1"
+                 src="{{auth()->user()->gravatar_url}}"
                  class="mx-auto object-cover rounded-full h-10 w-10 " />
         </a>
         <div x-data="{ dropdownOpen: false }">
