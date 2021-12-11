@@ -122,6 +122,14 @@
                 </a>
             @endguest
             @auth
+                @role(\Modules\Role\Entities\RoleVar::PASSENGER)
+                    <button id="become-driver" class="mr-3 px-2 py-1 font-bold rounded bg-green-400 hover:bg-green-500 text-xs w-auto h-auto">Become Driver</button>
+                @endrole
+
+                @role(\Modules\Role\Entities\RoleVar::DRIVER)
+                    <button id="add-itinerary" class="mr-3 hover:text-green-300 "><x-heroicon-o-plus-circle class="w-6 h-6"/></button>
+                @endrole
+
                 <div x-data="{ dropdownOpen: false }">
                     <button @click="dropdownOpen = !dropdownOpen"
                             class="mr-3 mt-1 hover:text-green-300 transition">
