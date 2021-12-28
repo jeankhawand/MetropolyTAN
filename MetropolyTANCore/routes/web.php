@@ -15,19 +15,20 @@ use Modules\Core\Entities\BusStop;
 */
 
 Route::get('/', function () {
-    $features = BusStop::selectRaw('name, ST_AsGeoJson(location) as geojson')->get()->map(function ($stop) {
-        return [
-            'type' => 'Feature',
-            'geometry' => json_decode($stop->geojson),
-            'properties' => [
-                'name' => $stop->name,
-            ],
-        ];
+    $bus_stops = cache()->remember('bus_stops_geojson', 15, function () {
+        $features = BusStop::selectRaw('name, ST_AsGeoJson(location) as geojson')->get()->map(function ($stop) {
+            return [
+                'type' => 'Feature',
+                'geometry' => json_decode($stop->geojson),
+                'properties' => [
+                    'title' => $stop->name,
+                ],
+            ];
+        });
+        return json_encode([
+            'type' => 'FeatureCollection',
+            'features' => $features,
+        ]);
     });
-
-    $bus_stops = json_encode([
-        'type' => 'FeatureCollection',
-        'features' => $features,
-    ]);
     return view('index',['bus_stops'=>$bus_stops]);
 });
