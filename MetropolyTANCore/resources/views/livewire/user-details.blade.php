@@ -150,7 +150,7 @@
 @if($user->hasRole(\Modules\Role\Entities\RoleVar::DRIVER))
     <script src='https://api.mapbox.com/mapbox-gl-js/v2.6.0/mapbox-gl.js'></script>
     <script>
-        mapboxgl.accessToken = 'pk.eyJ1IjoicWF1bnR1bTk1NSIsImEiOiJja3RsdXQ3aG0wYjN0MndzNHh3bmNwZHF5In0.u4fqOWocyXyeUeCA3tUHUw';
+        mapboxgl.accessToken = '{{config("services.mapbox.public_token")}}';
         const map = new mapboxgl.Map({
             container: 'map',
             style: 'mapbox://styles/mapbox/navigation-night-v1',

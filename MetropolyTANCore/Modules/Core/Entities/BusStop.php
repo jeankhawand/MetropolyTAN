@@ -19,4 +19,20 @@ class BusStop extends Model
     {
         return \Modules\Core\Database\factories\BusStopFactory::new();
     }
+    public function getStopCoordinatesAttribute(){
+        $features = $this::selectRaw('name, ST_AsGeoJson(location) as geojson')->get()->map(function ($serviceRegion) {
+            return [
+                'type' => 'Feature',
+                'geometry' => json_decode($serviceRegion->geojson),
+                'properties' => [
+                    'name' => $serviceRegion->name,
+                ],
+            ];
+        });
+
+        return json_encode([
+            'type' => 'FeatureCollection',
+            'features' => $features,
+        ]);
+    }
 }
