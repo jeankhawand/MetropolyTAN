@@ -16,8 +16,7 @@ class CreateBusStopsTable extends Migration
         Schema::create('bus_stops', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->double('latitude');
-            $table->double('longitude');
+            $table->point('location');
             $table->timestamps();
         });
     }
