@@ -52,8 +52,7 @@ class UserTable extends PowerGridComponent
             return User::query()
                 ->where('id', '!=', auth()->user()->id)
                 ->where('id', '!=', User::role('admin')->get()[0]->id)
-
-                ;
+                ->role([RoleVar::PASSENGER, RoleVar::DRIVER]);
         }
 
     }

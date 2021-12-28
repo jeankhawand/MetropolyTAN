@@ -43,18 +43,19 @@
 @endhasanyrole
 @bukScripts
 <script src="{{ asset('js/app.js') }}"></script>
-@auth
-    <script src="https://js.pusher.com/beams/1.0/push-notifications-cdn.js"></script>
-    <script>
-        const beamsClient = new PusherPushNotifications.Client({
-            instanceId: '280dbebe-4910-4697-ad65-25d358a3865e',
-        });
+{{--used to push notifications--}}
+{{--@auth--}}
+{{--    <script src="https://js.pusher.com/beams/1.0/push-notifications-cdn.js"></script>--}}
+{{--    <script>--}}
+{{--        const beamsClient = new PusherPushNotifications.Client({--}}
+{{--            instanceId: '280dbebe-4910-4697-ad65-25d358a3865e',--}}
+{{--        });--}}
 
-        beamsClient.start()
-            .then(() => beamsClient.addDeviceInterest('hello'))
-            .then(() => console.log('Successfully registered and subscribed!'))
-            .catch(console.error);
-    </script>
-@endauth
+{{--        beamsClient.start()--}}
+{{--            .then(() => beamsClient.addDeviceInterest('hello'))--}}
+{{--            .then(() => console.log('Successfully registered and subscribed!'))--}}
+{{--            .catch(console.error);--}}
+{{--    </script>--}}
+{{--@endauth--}}
 @stack('scripts')
 </html>

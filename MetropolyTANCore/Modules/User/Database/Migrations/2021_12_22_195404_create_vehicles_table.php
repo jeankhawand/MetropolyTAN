@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateItinerariesTable extends Migration
+class CreateVehiclesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,12 @@ class CreateItinerariesTable extends Migration
      */
     public function up()
     {
-        Schema::create('itineraries', function (Blueprint $table) {
+        Schema::create('vehicles', function (Blueprint $table) {
             $table->id();
-
+            $table->string("brand");
+            $table->string("model");
+            $table->string("vin");
+            $table->unsignedInteger("seats");
             $table->timestamps();
         });
     }
@@ -27,6 +30,6 @@ class CreateItinerariesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('itineraries');
+        Schema::dropIfExists('vehicles');
     }
 }

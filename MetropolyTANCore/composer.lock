@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c6a8c234e1aaa0fcb89a70471289aa11",
+    "content-hash": "cd5f225337b43f67c4d8c8ee82272268",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -425,6 +425,65 @@
                 }
             ],
             "time": "2021-10-24T19:36:20+00:00"
+        },
+        {
+            "name": "bosnadev/database",
+            "version": "0.21.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bosnadev/database.git",
+                "reference": "f08810c40db1ee284ee597b07b829a3a42298185"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bosnadev/database/zipball/f08810c40db1ee284ee597b07b829a3a42298185",
+                "reference": "f08810c40db1ee284ee597b07b829a3a42298185",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/dbal": "^2.5|^3.0",
+                "illuminate/database": "^5.0|^6.0|^7.0|^8.0",
+                "php": ">=5.5",
+                "ramsey/uuid": "^3.0|^4.0"
+            },
+            "require-dev": {
+                "codeclimate/php-test-reporter": "^0.3.2",
+                "mockery/mockery": "0.9.*",
+                "phpunit/phpunit": "~4.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Bosnadev\\Database\\": "src/Bosnadev/Database/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mirza Pasic",
+                    "email": "mirza@bosnadev.com"
+                },
+                {
+                    "name": "Peter Haza",
+                    "email": "peter.haza@gmail.com"
+                }
+            ],
+            "description": "Eloquent Extended, added some PostgreSQL features",
+            "homepage": "https://bosnadev.com",
+            "keywords": [
+                "database",
+                "eloquent",
+                "laravel",
+                "postgresql"
+            ],
+            "support": {
+                "issues": "https://github.com/bosnadev/database/issues",
+                "source": "https://github.com/bosnadev/database/tree/0.21.1"
+            },
+            "time": "2021-08-30T05:38:44+00:00"
         },
         {
             "name": "box/spout",
@@ -1846,6 +1905,107 @@
             "time": "2021-04-26T11:24:25+00:00"
         },
         {
+            "name": "geo-io/interface",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/geo-io/interface.git",
+                "reference": "cf46fe7b013de20ab8b601238c7d91b480810644"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/geo-io/interface/zipball/cf46fe7b013de20ab8b601238c7d91b480810644",
+                "reference": "cf46fe7b013de20ab8b601238c7d91b480810644",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "GeoIO\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jan Sorgalla",
+                    "email": "jsorgalla@gmail.com"
+                }
+            ],
+            "description": "Geo I/O base interfaces.",
+            "keywords": [
+                "geo",
+                "geometry",
+                "io"
+            ],
+            "support": {
+                "issues": "https://github.com/geo-io/interface/issues",
+                "source": "https://github.com/geo-io/interface/tree/v1.0.1"
+            },
+            "time": "2016-07-28T07:17:02+00:00"
+        },
+        {
+            "name": "geo-io/wkb-parser",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/geo-io/wkb-parser.git",
+                "reference": "cceee8f4e8b2058f3f1a0372c930140f23fe1ee1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/geo-io/wkb-parser/zipball/cceee8f4e8b2058f3f1a0372c930140f23fe1ee1",
+                "reference": "cceee8f4e8b2058f3f1a0372c930140f23fe1ee1",
+                "shasum": ""
+            },
+            "require": {
+                "geo-io/interface": "~1.0",
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "mockery/mockery": "~0.9.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GeoIO\\WKB\\Parser\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jan Sorgalla",
+                    "email": "jsorgalla@gmail.com"
+                }
+            ],
+            "description": "Well-known binary (WKB) Parser.",
+            "keywords": [
+                "geo",
+                "geometry",
+                "io",
+                "parser",
+                "wkb"
+            ],
+            "support": {
+                "issues": "https://github.com/geo-io/wkb-parser/issues",
+                "source": "https://github.com/geo-io/wkb-parser/tree/master"
+            },
+            "time": "2015-06-30T04:19:13+00:00"
+        },
+        {
             "name": "graham-campbell/result-type",
             "version": "v1.0.2",
             "source": {
@@ -2228,6 +2388,63 @@
                 }
             ],
             "time": "2021-10-06T17:43:30+00:00"
+        },
+        {
+            "name": "jmikola/geojson",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jmikola/geojson.git",
+                "reference": "6ec3016cc0215667b7775f6ead7bd0337ad66eee"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jmikola/geojson/zipball/6ec3016cc0215667b7775f6ead7bd0337ad66eee",
+                "reference": "6ec3016cc0215667b7775f6ead7bd0337ad66eee",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~3.7"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "GeoJson\\": "src/"
+                },
+                "classmap": [
+                    "stubs/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jeremy Mikola",
+                    "email": "jmikola@gmail.com"
+                }
+            ],
+            "description": "GeoJSON implementation for PHP",
+            "homepage": "https://github.com/jmikola/geojson",
+            "keywords": [
+                "geo",
+                "geojson",
+                "geospatial"
+            ],
+            "support": {
+                "issues": "https://github.com/jmikola/geojson/issues",
+                "source": "https://github.com/jmikola/geojson/tree/master"
+            },
+            "time": "2015-09-27T15:35:21+00:00"
         },
         {
             "name": "laravel-notification-channels/pusher-push-notifications",
@@ -3246,6 +3463,70 @@
                 }
             ],
             "time": "2021-10-01T21:08:31+00:00"
+        },
+        {
+            "name": "mstaack/laravel-postgis",
+            "version": "5.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mstaack/laravel-postgis.git",
+                "reference": "1e9b896d71c2f71bcdd49fc86da30ec31c1857b7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mstaack/laravel-postgis/zipball/1e9b896d71c2f71bcdd49fc86da30ec31c1857b7",
+                "reference": "1e9b896d71c2f71bcdd49fc86da30ec31c1857b7",
+                "shasum": ""
+            },
+            "require": {
+                "bosnadev/database": "^0.21",
+                "geo-io/wkb-parser": "^1.0",
+                "illuminate/database": "^6.0|^7.0|^8.0",
+                "jmikola/geojson": "^1.0",
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "illuminate/pagination": "^6.0|^7.0|^8.0",
+                "mockery/mockery": "^1.3",
+                "phpunit/phpunit": "^8.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "MStaack\\LaravelPostgis\\DatabaseServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "MStaack\\LaravelPostgis\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Peter Haza",
+                    "email": "peter.haza@gmail.com"
+                },
+                {
+                    "name": "Nicholas Barrett",
+                    "email": "njbarrett7@gmail.com"
+                },
+                {
+                    "name": "Max Matteo Staack",
+                    "email": "maxmatteostaack@gmail.com"
+                }
+            ],
+            "description": "Postgis extensions for laravel. Aims to make it easy to work with geometries from laravel models",
+            "support": {
+                "issues": "https://github.com/mstaack/laravel-postgis/issues",
+                "source": "https://github.com/mstaack/laravel-postgis/tree/5.2"
+            },
+            "time": "2020-10-22T12:00:14+00:00"
         },
         {
             "name": "nesbot/carbon",
@@ -10498,7 +10779,8 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.3|^8.0"
+        "php": "^7.3|^8.0",
+        "ext-json": "*"
     },
     "platform-dev": [],
     "plugin-api-version": "2.1.0"
