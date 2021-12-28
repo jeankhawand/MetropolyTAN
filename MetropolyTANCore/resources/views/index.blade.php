@@ -14,6 +14,10 @@
             font-family: 'Outfit', sans-serif;
         }
 
+        .mapboxgl-ctrl-top-right .mapboxgl-ctrl {
+            margin: 77px 10px 0 0;
+        }
+
         header button {
             width: 30px;
             height: 30px;
@@ -126,8 +130,8 @@
                     <button @click="dropdownOpen = !dropdownOpen"
                             class="mr-3 mt-1 hover:text-green-300 transition">
                         <img alt="profil"
-                             src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.7FTrJ0AZNspwAi5Jhco06QHaHa%26pid%3DApi&f=1"
-                             class="rounded-full" />
+                             src="{{auth()->user()->gravatar_url}}"
+                             class="rounded-full"/>
                     </button>
                     {{--            <div x-show="dropdownOpen" @click="dropdownOpen = false" class="fixed inset-0 h-full w-full z-10"></div>--}}
                     <div x-show="dropdownOpen"
@@ -223,6 +227,7 @@
             @include('components.card',['data' => 'Jean Khawand'])
         </div>
     </div>
+    <livewire:update-user-coordinates/>
 @endsection
 
 @push('scripts')
@@ -233,7 +238,7 @@
     <script
         src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
     <script>
-        mapboxgl.accessToken = 'pk.eyJ1IjoicWF1bnR1bTk1NSIsImEiOiJja3RsdXQ3aG0wYjN0MndzNHh3bmNwZHF5In0.u4fqOWocyXyeUeCA3tUHUw';
+        mapboxgl.accessToken = '{{config("services.mapbox.public_token")}}';
         const map = new mapboxgl.Map({
             container: 'map',
             style: 'mapbox://styles/mapbox/navigation-night-v1',
@@ -244,7 +249,34 @@
             accessToken: mapboxgl.accessToken,
             mapboxgl: mapboxgl
         });
-
+        map.on('load', () => {
+            map.loadImage(
+                'https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png',
+                (error, image) => {
+                    if (error) throw error;
+                    map.addImage('custom-marker', image);
+                    map.addSource('points', {
+                        'type': 'geojson',
+                        'data': {!! $bus_stops !!}
+                    });
+                    // Add a symbol layer
+                    map.addLayer({
+                        'id': 'points',
+                        'type': 'symbol',
+                        'source': 'points',
+                        'layout': {
+                            'icon-image': 'custom-marker',
+                            'text-field': ['get', 'title'],
+                            'text-font': [
+                                'Open Sans Semibold',
+                                'Arial Unicode MS Bold'
+                            ],
+                            'text-offset': [0, 1.25],
+                            'text-anchor': 'top'
+                        }
+                    });
+                });
+        });
         $(document).ready(function () {
             // $('.mapbox-search').append(geocoder.onAdd(map));
 
@@ -297,5 +329,59 @@
             $(this).next().toggleClass('open');
         });
     </script>
+    @auth
+        @hasanyrole('driver|passenger')
+        <script>
+            // Initialize the GeolocateControl.
+            const oldposition = {
+                accuracy: 0,
+                latitude: 0,
+                longitude: 0
+            }
+
+            const geolocate = new mapboxgl.GeolocateControl({
+                // positionOptions: {
+                //     enableHighAccuracy: true
+                // },
+                showAccuracyCircle: true,
+                showUserHeading: true,
+                trackUserLocation: true
+            });
+            map.addControl(geolocate);
+            // this event would be triggered on each location change
+            geolocate.on('geolocate', (data) => {
+                console.log('A geolocate event has occurred.');
+                const {accuracy, latitude, longitude} = data.coords;
+                const position = {
+                    accuracy,
+                    latitude,
+                    longitude
+                }
+                if (position.latitude > oldposition.latitude && position.longitude > oldposition.latitude) {
+                    Livewire.emit('updateUserCoordinates', JSON.stringify(position), '{{auth()->user()->id}}')
+                }
+
+            });
+
+            geolocate.on('error', (data) => {
+                console.log('An error event has occurred.');
+                console.error(data)
+            });
+            geolocate.on('outofmaxbounds', (data) => {
+                console.log('An outofmaxbounds event has occurred.');
+                console.log(data)
+            });
+            // once user trigger the location button
+            geolocate.on('trackuserlocationstart', () => {
+                console.log('A trackuserlocationstart event has occurred.');
+
+            });
+            geolocate.on('trackuserlocationend', (data) => {
+                console.log('A trackuserlocationend event has occurred.');
+                console.log(data)
+            });
+        </script>
+        @endhasanyrole
+    @endauth
 @endpush
 
