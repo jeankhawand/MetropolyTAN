@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Schema;
-use MStaack\LaravelPostgis\Schema\Blueprint;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class CreateItinerariesTable extends Migration
@@ -15,8 +15,6 @@ class CreateItinerariesTable extends Migration
     {
         Schema::create('itineraries', function (Blueprint $table) {
             $table->id();
-            $table->point('source');
-            $table->point('destination');
             $table->timestamps();
         });
     }
