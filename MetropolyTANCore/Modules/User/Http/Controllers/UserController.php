@@ -5,7 +5,6 @@ namespace Modules\User\Http\Controllers;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Modules\User\Events\UserCoordinates;
 
 class UserController extends Controller
 {
@@ -76,23 +75,5 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
-    }
-    /**
-     * store user coordinates
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update_coordinates(Request $request)
-    {
-        ddd($request->all());
-        $lat = $request->input('lat');
-        $long = $request->input('long');
-        $user = auth()->user();
-        $user->lat = $lat;
-        $user->long = $long;
-        $user->save();
-        $location = ["lat"=>$lat, "long"=>$long];
-        event(new UserCoordinates(auth()->user,$location));
-        return response()->json(['status'=>'success', 'data'=>$location]);
     }
 }
