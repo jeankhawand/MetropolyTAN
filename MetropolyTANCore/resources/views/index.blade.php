@@ -106,6 +106,13 @@
         .more-info.active > span {
             transform: rotateZ(180deg);
         }
+
+        .time-popup .mapboxgl-popup-content{
+            padding: 2px 5px;
+        }
+        .time-popup .mapboxgl-popup-tip{
+            display: none;
+        }
     </style>
 @endpush
 
@@ -233,6 +240,7 @@
 @push('scripts')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
             integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script src='https://api.mapbox.com/mapbox-gl-js/v2.6.0/mapbox-gl.js'></script>
     <script
@@ -249,6 +257,86 @@
             accessToken: mapboxgl.accessToken,
             mapboxgl: mapboxgl
         });
+
+        const trajet = [[6.801092,47.494105],[6.795333,47.511371],[6.757310,47.568328],[6.835759,47.598260],[6.857846,47.636139]]
+        var start_time = moment().format('H:mm');
+
+        function drawPopup(coords, html){
+            new mapboxgl.Popup({ closeButton: false,className: 'time-popup' })
+            .setLngLat(coords)
+            .setHTML(html)
+            .addTo(map);
+        }
+        function drawMarker(coords, popup = '', color = '#FEF349'){
+            const marker = new mapboxgl.Marker({ color: color, rotation: 0 })
+            .setLngLat(coords)
+            .addTo(map);
+
+            if(popup != '')
+                marker.setPopup(new mapboxgl.Popup({ offset: 25,closeButton: false,className: 'time-popup' }).setHTML(popup)).togglePopup()
+        }
+        async function drawRoute(id, start, end, color = '#FEF349', time = '', profile = 'driving'){
+            //Profiles can be: driving-traffic | driving | walking | cycling
+            const query = await fetch(
+                `https://api.mapbox.com/directions/v5/mapbox/${profile}/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`, {
+                    method: 'GET'
+                }
+            );
+            const json = await query.json();
+            const data = json.routes[0];
+            const route = data.geometry.coordinates;
+            const geojson = {
+                type: 'Feature',
+                properties: {},
+                geometry: {
+                    type: 'LineString',
+                    coordinates: route
+                }
+            };
+            if (map.getSource(id)) {
+                map.getSource(id).setData(geojson);
+            }else {
+                map.addLayer({
+                    id: id,
+                    type: 'line',
+                    source: {
+                        type: 'geojson',
+                        data: geojson
+                    },
+                    layout: {
+                        'line-join': 'round',
+                        'line-cap': 'round'
+                    },
+                    paint: {
+                        'line-color': color,
+                        'line-width': 5,
+                        'line-opacity': 1
+                    }
+                });
+            }
+            //Draw each end point
+            if(time != ''){
+                var mins = Math.floor(data.duration/60);
+                drawPopup(route[Math.round(route.length/2)], '<b>'+mins+' mins</b>');
+                var new_time = moment(time,'H:mm').add('m',mins).format('H:mm');
+                drawMarker(coords = end, popup = 'Expected arrival time <b>'+new_time+'</b>');
+                return new_time;
+            }
+            return null;
+        }
+        async function getRoutes(trajet){
+            if(trajet.length >= 2){
+                var res_time = start_time;
+                for (let i = 0; i < trajet.length-1; i++) {
+                    res_time = await drawRoute('route'+(trajet[i]+trajet[i+1]).toString().replaceAll('.', '').replaceAll(',', '')+'',trajet[i],trajet[i+1],color='#FFFFFF', time = res_time);
+                }
+                //Draw START point
+                drawMarker(coords = trajet[0], popup = 'Start time <b>'+start_time+'</b>');
+            }else{
+                console.log('Path is too short');
+            }
+        }
+
         map.on('load', () => {
             map.loadImage(
                 'https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png',
@@ -276,7 +364,9 @@
                         }
                     });
                 });
+            getRoutes(trajet);
         });
+
         $(document).ready(function () {
             // $('.mapbox-search').append(geocoder.onAdd(map));
 
