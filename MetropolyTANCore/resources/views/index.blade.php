@@ -161,7 +161,7 @@
     </main>
 
     <div id="search"
-         class="fixed bg-gray-500 bg-opacity-50 inset-0 z-40 flex items-center justify-center drop-shadow-md hidden">
+         class="fixed bg-gray-500 bg-opacity-50 inset-0 z-40 flex items-center justify-center drop-shadow-md">
         <div class="absolute inset-0 z-0"></div>
         <div class="bg-white md:w-1/3 w-11/12 p-5 rounded-3xl z-10">
             <form>
