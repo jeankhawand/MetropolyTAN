@@ -1,5 +1,7 @@
 {
     "Core": true,
     "Dashboard": true,
-    "User": true
+    "User": true,
+    "Role": true,
+    "Itinerary": true
 }

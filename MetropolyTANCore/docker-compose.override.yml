@@ -7,4 +7,4 @@ services:
     ports:
       - 8080:80
     environment:
-      - ADMINER_DEFAULT_SERVER=${DB_HOST}
+      - ADMINER_DEFAULT_SERVER=${DB_HOST:-db}

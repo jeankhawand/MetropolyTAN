@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\Core\Entities\BusStop;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,5 +15,19 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    $features = BusStop::selectRaw('name, ST_AsGeoJson(location) as geojson')->get()->map(function ($stop) {
+        return [
+            'type' => 'Feature',
+            'geometry' => json_decode($stop->geojson),
+            'properties' => [
+                'name' => $stop->name,
+            ],
+        ];
+    });
+
+    $bus_stops = json_encode([
+        'type' => 'FeatureCollection',
+        'features' => $features,
+    ]);
+    return view('index',['bus_stops'=>$bus_stops]);
 });

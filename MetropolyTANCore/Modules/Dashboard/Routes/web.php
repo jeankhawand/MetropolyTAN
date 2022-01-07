@@ -11,6 +11,8 @@
 |
 */
 
-Route::prefix('dashboard')->group(function() {
-    Route::get('/', 'DashboardController@index');
+use Modules\Role\Entities\RoleVar;
+
+Route::prefix('dashboard')->name('dashboard.')->middleware(['auth', 'role:' . RoleVar::ADMIN . '|' . RoleVar::AUTHORITATIVEPUBLICTRANSPORTATIONORGANIZER . '|' . RoleVar::OPERATOR . '|' . RoleVar::TELEOPERATOR])->group(function () {
+    Route::get('/', 'DashboardController@index')->name('index');
 });

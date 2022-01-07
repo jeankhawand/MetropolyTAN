@@ -11,6 +11,9 @@
 |
 */
 
-Route::prefix('user')->group(function() {
-    Route::get('/', 'UserController@index');
+Route::prefix('user')->name('user.')->middleware('auth')->group(function() {
+    Route::get('/', 'UserController@index')->middleware("can:users.read")->name('index');
+    Route::post('/', 'UserController@index')->middleware("can:users.create")->name('create');
+    Route::put('/', 'UserController@index')->middleware("can:users.update")->name('update');
+    Route::delete('/', 'UserController@index')->middleware("can:users.delete")->name('delete');
 });
