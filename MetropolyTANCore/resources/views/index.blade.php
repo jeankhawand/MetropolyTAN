@@ -123,9 +123,6 @@
             <img src="{{URL::asset('/images/logo/full-logo-white.png')}}" alt="MetropolYTAN Logo" width="60"/>
         </div>
         <div class="absolute flex items-center inset-y-0 right-4">
-            <button id="open-search" class="mr-3 hover:text-green-300 transition">
-                <x-heroicon-o-search class="w-6 h-6"/>
-            </button>
             @guest
                 {{--                @livewire('mode-toggle')--}}
                 <a class="flex hover:text-green-300 transition h-6 w-6" href="{{route('login')}}">
@@ -160,80 +157,86 @@
         <div id="map" class="w-full h-screen"></div>
     </main>
 
-    <div id="search"
-         class="fixed bg-gray-500 bg-opacity-50 inset-0 z-40 flex items-center justify-center drop-shadow-md">
-        <div class="absolute inset-0 z-0"></div>
-        <div class="bg-white md:w-1/3 w-11/12 p-5 rounded-3xl z-10">
-            <form>
-                <div class="mb-4 mapbox-search">
+    <style>
+        /* width */
+        #stops-div::-webkit-scrollbar {
+            width: 2px;
+        }
+
+        /* Track */
+        #stops-div::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+            border-radius: 25px;
+        }
+
+        /* Handle */
+        #stops-div::-webkit-scrollbar-thumb {
+            background: #888; 
+            border-radius: 25px;
+        }
+
+        /* Handle on hover */
+        #stops-div::-webkit-scrollbar-thumb:hover {
+            background: #555; 
+        }
+    </style>
+
+    <div id="results" class="fixed inset-x-0 bottom-0 bg-gray-500 z-30 transform transition delay-75 translate-y-full p-5">
+        <div id="search-inline" class="absolute flex p-5 inset-x-0 bg-gray-500 rounded-t-3xl">
+            <form class="grid grid-cols-1 md:grid-cols-4 gap-4 w-full">
+                <div class="relative mb-4 md:mb-0">
                     <input
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline"
                         id="from" type="text" placeholder="From" required>
-                </div>
-                <div class="mb-4 flex">
-                    <div class="pl-2 flex items-center">
-                        <button type="button" id="btn-switch" class="w-20 transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                 stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                      d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="flex flex-grow">
-                        <ul class="w-full" id="stops-list">
-                            <li>
-                                <div class="flex items-center pl-2">
-                                    <div class="flex flex-grow">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-15" fill="none"
-                                             viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
-                                                  d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                        </svg>
-                                        <input
-                                            class="rounded text-xs w-full px-1 text-gray-700 focus:outline-none transition"
-                                            id="stop" type="text" placeholder="Add Stop">
-                                    </div>
-                                    <button type="button" id="add-stop" class="rounded text-xs py-1 px-2 bg-green-100">
-                                        Add
-                                    </button>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="mb-4">
+                    <button type="button" id="btn-switch" class="absolute bg-gray-500 border border-solid border-white -left-3 p-1 transition rounded-full">
+                        <x-heroicon-o-switch-vertical class="w-5 h-5 text-white"/>
+                    </button>
                     <input
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         id="to" type="text" placeholder="To" required>
                 </div>
-                @hasallroles('driver|passenger')
-                <div class="mb-4">
-                    <label class="inline-flex items-center">
-                        <input type="radio" class="form-radio" name="type" value="passenger" required>
-                        <span class="ml-2">Passenger</span>
-                    </label>
-                    <label class="inline-flex items-center ml-6">
-                        <input type="radio" class="form-radio" name="type" value="driver" required>
-                        <span class="ml-2">Driver</span>
-                    </label>
+                <div class="flex flex-col justify-between">
+                    <label class="py-2 text-white">Add your stops:</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <input
+                            class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none col-span-2 focus:shadow-outline"
+                            id="stop" type="text" placeholder="Type here">
+                        <button type="button" id="add-stop" class="rounded text-sm py-1 px-2 bg-green-100">
+                            Add stop
+                        </button>
+                    </div>
                 </div>
-                @endhasallroles
-                <div>
-                    <input type="submit"
-                           class="shadow rounded-3xl w-full py-2 px-3 bg-green-200 hover:bg-green-300 transition"
-                           value="Search">
+                <div id="stops-div" class="flex max-h-full overflow-y-auto">
+                    <ul id="stops-list" class="list-unstyle text-sm text-white w-full">
+                        <li class="text-center">No stops added</li>
+                    </ul>
+                </div>
+                <div class="flex items-center">
+                    @hasallroles('driver|passenger')
+                    <div class="flex flex-col">
+                        <label class="flex items-center">
+                            <input type="radio" class="form-radio" name="type" value="passenger" required>
+                            <span class="ml-2 text-white">Passenger</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" class="form-radio" name="type" value="driver" required>
+                            <span class="ml-2 text-white">Driver</span>
+                        </label>
+                    </div>
+                    @endhasallroles
+                    <div class="relative w-full">
+                        <input type="submit"
+                            class="shadow rounded-3xl w-full py-2 ml-3 px-3 bg-green-200 hover:bg-green-300 transition"
+                            value="Search">
+                    </div>
                 </div>
             </form>
         </div>
-    </div>
-
-    <div id="results"
-         class="fixed inset-x-0 bottom-0 bg-gray-500 z-30 rounded-t-3xl transform transition delay-75 translate-y-full p-5">
         <div class="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             @include('components.card',['data' => 'Jean Khawand'])
         </div>
     </div>
+
     <livewire:update-user-coordinates/>
 @endsection
 
@@ -369,7 +372,10 @@
 
         $(document).ready(function () {
             // $('.mapbox-search').append(geocoder.onAdd(map));
-
+            $('#search-inline').css('top','calc(-'+$('#search-inline').innerHeight()+'px + 2px)');
+            var btnHeight = $('#btn-switch').innerHeight()/2;
+            $('#btn-switch').css('top','calc(50% - '+btnHeight+'px)');
+            $('#stops-list').parent().css('max-height', $('#stops-list').parent().innerHeight()+'px');
         });
 
         $(document).on('click', '#search > div:first-child, #open-search', function () {
@@ -378,14 +384,16 @@
 
         $(document).on('click', '#add-stop', function (e) {
             e.preventDefault();
+            console.log();
             var stop = $('#stop').val();
             if (stop != '' && stop != '') {
-                if ($("#stops-list li").length < 6) {
-                    $('#stops-list').append('<li> <div class="flex items-center pl-2 mt-1"> <div class="flex flex-grow"> <svg xmlns="http://www.w3.org/2000/svg" class="w-15" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /> </svg> <span class="text-xs w-full px-1 text-gray-700">' + stop + '</span> </div> <button type="button" class="rounded remove-stop text-xs py-1 px-2 bg-red-100">Remove<button> </div> </li>');
+                var length_ul = $("#stops-list li").length;
+                if(length_ul == 1 && $("#stops-list li:first-child").html() == "No stops added"){
+                    $("#stops-list li:first-child").remove(); 
+                }
+                if (length_ul < 6) {
+                    $('#stops-list').append('<li> <div class="flex items-center pl-2 mt-1"> <div class="flex flex-grow"> <span class="text-xs w-full px-1">' + stop + '</span> </div> <button type="button" class="rounded remove-stop text-xs py-1 px-2 text-gray-700 bg-red-100">Remove<button> </div> </li>');
                     $('#stop').val('');
-                    if ($("#stops-list li").length == 6) {
-                        $("#stops-list li:first-child").addClass('hidden');
-                    }
                 }
             }
         });
@@ -394,6 +402,9 @@
             e.preventDefault();
             $(this).closest('li').remove();
             $("#stops-list li:first-child").removeClass('hidden');
+            if($("#stops-list li").length == 0){
+                $('#stops-list').append('<li class="text-center">No stops added</li>');
+            }
         });
 
         $(document).on('click', '#btn-switch', function (e) {
@@ -407,9 +418,8 @@
             }
         });
 
-        $(document).on('submit', '#search form', function (e) {
+        $(document).on('submit', '#search-inline form', function (e) {
             e.preventDefault();
-            $('#search').toggleClass('hidden');
             $('#results').addClass('active');
         });
 
