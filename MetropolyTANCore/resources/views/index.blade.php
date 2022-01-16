@@ -106,6 +106,23 @@
         .more-info.active > span {
             transform: rotateZ(180deg);
         }
+
+        .time-popup .mapboxgl-popup-content{
+            padding: 2px 5px;
+        }
+        .time-popup .mapboxgl-popup-tip{
+            display: none;
+        }
+
+        .mapboxgl-ctrl-geocoder .suggestions{
+            top: unset;
+            bottom: 100%;
+        }
+        .mapboxgl-ctrl-geocoder.mapboxgl-ctrl{
+            margin:0;
+            width:100%;
+            max-width: unset;
+        }
     </style>
 @endpush
 
@@ -116,9 +133,6 @@
             <img src="{{URL::asset('/images/logo/full-logo-white.png')}}" alt="MetropolYTAN Logo" width="60"/>
         </div>
         <div class="absolute flex items-center inset-y-0 right-4">
-            <button id="open-search" class="mr-3 hover:text-green-300 transition">
-                <x-heroicon-o-search class="w-6 h-6"/>
-            </button>
             @guest
                 {{--                @livewire('mode-toggle')--}}
                 <a class="flex hover:text-green-300 transition h-6 w-6" href="{{route('login')}}">
@@ -126,9 +140,13 @@
                 </a>
             @endguest
             @auth
+                <button class="btn-open-modal w-auto h-auto text-white hover:text-green-300 transition mr-2" data-modalid="choose-add">
+                    <x-heroicon-o-plus-circle class="w-6 h-6"/>
+                </button>
+
                 <div x-data="{ dropdownOpen: false }">
                     <button @click="dropdownOpen = !dropdownOpen"
-                            class="mr-3 mt-1 hover:text-green-300 transition">
+                            class="mt-2 hover:text-green-300 transition">
                         <img alt="profil"
                              src="{{auth()->user()->gravatar_url}}"
                              class="rounded-full"/>
@@ -153,102 +171,252 @@
         <div id="map" class="w-full h-screen"></div>
     </main>
 
-    <div id="search"
-         class="fixed bg-gray-500 bg-opacity-50 inset-0 z-40 flex items-center justify-center drop-shadow-md hidden">
-        <div class="absolute inset-0 z-0"></div>
-        <div class="bg-white md:w-1/3 w-11/12 p-5 rounded-3xl z-10">
-            <form>
-                <div class="mb-4 mapbox-search">
-                    <input
+    <style>
+        /* width */
+        #stops-div::-webkit-scrollbar {
+            width: 2px;
+        }
+
+        /* Track */
+        #stops-div::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+            border-radius: 25px;
+        }
+
+        /* Handle */
+        #stops-div::-webkit-scrollbar-thumb {
+            background: #888; 
+            border-radius: 25px;
+        }
+
+        /* Handle on hover */
+        #stops-div::-webkit-scrollbar-thumb:hover {
+            background: #555; 
+        }
+    </style>
+
+    <div id="results" class="fixed inset-x-0 bottom-0 bg-gray-500 z-30 transform transition delay-75 translate-y-full p-5">
+        <div id="search-inline" class="absolute flex p-5 inset-x-0 bg-gray-500 rounded-t-3xl">
+            <form class="grid grid-cols-1 md:grid-cols-4 gap-4 w-full">
+                <div class="relative mb-4 md:mb-0">
+                    {{-- <input
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline"
+                        id="from" type="text" placeholder="From" required> --}}
+                        <div class="mb-2">
+                            <div class="shadow appearance-none rounded w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="from-geocoder"></div>
+                        </div>
+                    <button type="button" id="btn-switch" class="absolute bg-gray-500 border border-solid border-white -left-3 p-1 z-10 transition rounded-full">
+                        <x-heroicon-o-switch-vertical class="w-5 h-5 text-white"/>
+                    </button>
+                    {{-- <input
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="from" type="text" placeholder="From" required>
+                        id="to" type="text" placeholder="To" required> --}}
+                        <div>
+                            <div class="shadow appearance-none rounded w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="to-geocoder"></div>
+                        </div>
                 </div>
-                <div class="mb-4 flex">
-                    <div class="pl-2 flex items-center">
-                        <button type="button" id="btn-switch" class="w-20 transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                 stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                      d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
-                            </svg>
+                <div class="flex flex-col justify-between">
+                    <label class="py-2 text-white">Add your stops:</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <input class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none col-span-2 focus:shadow-outline"
+                            id="stop" type="text" placeholder="Type here">
+                        {{-- <div class="col-span-2 shadow appearance-none rounded text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="stop-geocoder"></div> --}}
+                        <button type="button" id="add-stop" class="rounded text-sm py-1 px-2 bg-green-100">
+                            Add stop
                         </button>
                     </div>
-                    <div class="flex flex-grow">
-                        <ul class="w-full" id="stops-list">
-                            <li>
-                                <div class="flex items-center pl-2">
-                                    <div class="flex flex-grow">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-15" fill="none"
-                                             viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
-                                                  d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                        </svg>
-                                        <input
-                                            class="rounded text-xs w-full px-1 text-gray-700 focus:outline-none transition"
-                                            id="stop" type="text" placeholder="Add Stop">
-                                    </div>
-                                    <button type="button" id="add-stop" class="rounded text-xs py-1 px-2 bg-green-100">
-                                        Add
-                                    </button>
-                                </div>
-                            </li>
-                        </ul>
+                </div>
+                <div id="stops-div" class="flex max-h-full overflow-y-auto">
+                    <ul id="stops-list" class="list-unstyle text-sm text-white w-full">
+                        <li class="text-center">No stops added</li>
+                    </ul>
+                </div>
+                <div class="flex items-center">
+                    @hasallroles('driver|passenger')
+                    <div class="flex flex-col">
+                        <label class="flex items-center">
+                            <input type="radio" class="form-radio" name="type" value="passenger" required>
+                            <span class="ml-2 text-white">Passenger</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" class="form-radio" name="type" value="driver" required>
+                            <span class="ml-2 text-white">Driver</span>
+                        </label>
                     </div>
-                </div>
-                <div class="mb-4">
-                    <input
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="to" type="text" placeholder="To" required>
-                </div>
-                @hasallroles('driver|passenger')
-                <div class="mb-4">
-                    <label class="inline-flex items-center">
-                        <input type="radio" class="form-radio" name="type" value="passenger" required>
-                        <span class="ml-2">Passenger</span>
-                    </label>
-                    <label class="inline-flex items-center ml-6">
-                        <input type="radio" class="form-radio" name="type" value="driver" required>
-                        <span class="ml-2">Driver</span>
-                    </label>
-                </div>
-                @endhasallroles
-                <div>
-                    <input type="submit"
-                           class="shadow rounded-3xl w-full py-2 px-3 bg-green-200 hover:bg-green-300 transition"
-                           value="Search">
+                    @endhasallroles
+                    <div class="relative w-full">
+                        <input type="submit"
+                            class="shadow rounded-3xl w-full py-2 ml-3 px-3 bg-green-200 hover:bg-green-300 transition"
+                            value="Search">
+                    </div>
                 </div>
             </form>
         </div>
-    </div>
-
-    <div id="results"
-         class="fixed inset-x-0 bottom-0 bg-gray-500 z-30 rounded-t-3xl transform transition delay-75 translate-y-full p-5">
         <div class="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             @include('components.card',['data' => 'Jean Khawand'])
         </div>
     </div>
+
+    <div id="choose-add" class="modal fixed bg-gray-500 bg-opacity-50 inset-0 z-30 flex items-center justify-center drop-shadow-md hidden">
+        <div class="absolute inset-0 z-0"></div>
+        <div class="bg-white p-5 rounded-3xl z-10 grid grid-cols-2 gap-3">
+            <button class="btn-open-modal shadow text-gray-500 rounded-3xl text-xs py-2 px-3 bg-green-200 hover:bg-green-300 transition" data-modalid="add-offer">Add Offer</button>
+            <button class="btn-open-modal shadow text-gray-500 rounded-3xl text-xs py-2 px-3 bg-green-200 hover:bg-green-300 transition" data-modalid="add-demand">Add Demand</button>
+        </div>
+    </div>
+    <div id="add-offer" class="modal fixed bg-gray-500 bg-opacity-50 inset-0 z-30 flex items-center justify-center drop-shadow-md hidden">
+        <div class="absolute inset-0 z-0"></div>
+        <div class="bg-white md:w-1/3 w-11/12 p-5 rounded-3xl z-10">
+            Add offer
+        </div>
+    </div>
+    <div id="add-demand" class="modal fixed bg-gray-500 bg-opacity-50 inset-0 z-30 flex items-center justify-center drop-shadow-md hidden">
+        <div class="absolute inset-0 z-0"></div>
+        <div class="bg-white md:w-1/3 w-11/12 p-5 rounded-3xl z-10">
+            Add demand
+        </div>
+    </div>
+
     <livewire:update-user-coordinates/>
 @endsection
 
 @push('scripts')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
             integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script src='https://api.mapbox.com/mapbox-gl-js/v2.6.0/mapbox-gl.js'></script>
-    <script
-        src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
     <script>
+        var from = null;
+        var to = null;
+        var stops = [];
+        var stop;
+
         mapboxgl.accessToken = '{{config("services.mapbox.public_token")}}';
+
         const map = new mapboxgl.Map({
             container: 'map',
             style: 'mapbox://styles/mapbox/navigation-night-v1',
             center: [6.818934, 47.510879],
             zoom: 12
         });
-        const geocoder = new MapboxGeocoder({
+        const geocoderFrom = new MapboxGeocoder({
             accessToken: mapboxgl.accessToken,
-            mapboxgl: mapboxgl
+            mapboxgl: mapboxgl,
+            marker: false,
+            placeholder: 'From',
+            flyTo: false,
+            proximity: {
+                longitude: 6.797655,
+                latitude: 47.509381
+            }
         });
+        const geocoderTo = new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl,
+            marker: false,
+            placeholder: 'To',
+            flyTo: false,
+            proximity: {
+                longitude: 6.797655,
+                latitude: 47.509381
+            }
+        });
+        const geocoderStop = new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl,
+            marker: false,
+            placeholder: 'Type here',
+            flyTo: false,
+            proximity: {
+                longitude: 6.797655,
+                latitude: 47.509381
+            }
+        });
+        $('#from-geocoder').append(geocoderFrom.onAdd(map));
+        $('#to-geocoder').append(geocoderTo.onAdd(map));
+        $('#stop-geocoder').append(geocoderStop.onAdd(map));
+
+        const trajet = [[6.801092,47.494105],[6.795333,47.511371],[6.757310,47.568328],[6.835759,47.598260],[6.857846,47.636139]]
+        var start_time = moment().format('H:mm');
+
+        function drawPopup(coords, html){
+            new mapboxgl.Popup({ closeButton: false,className: 'time-popup' })
+            .setLngLat(coords)
+            .setHTML(html)
+            .addTo(map);
+        }
+        function drawMarker(coords, popup = '', color = '#FEF349'){
+            const marker = new mapboxgl.Marker({ color: color, rotation: 0 })
+            .setLngLat(coords)
+            .addTo(map);
+
+            if(popup != '')
+                marker.setPopup(new mapboxgl.Popup({ offset: 25,closeButton: false,className: 'time-popup' }).setHTML(popup)).togglePopup()
+        }
+        async function drawRoute(id, start, end, color = '#FEF349', time = '', profile = 'driving'){
+            //Profiles can be: driving-traffic | driving | walking | cycling
+            const query = await fetch(
+                `https://api.mapbox.com/directions/v5/mapbox/${profile}/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`, {
+                    method: 'GET'
+                }
+            );
+            const json = await query.json();
+            const data = json.routes[0];
+            const route = data.geometry.coordinates;
+            const geojson = {
+                type: 'Feature',
+                properties: {},
+                geometry: {
+                    type: 'LineString',
+                    coordinates: route
+                }
+            };
+            if (map.getSource(id)) {
+                map.getSource(id).setData(geojson);
+            }else {
+                map.addLayer({
+                    id: id,
+                    type: 'line',
+                    source: {
+                        type: 'geojson',
+                        data: geojson
+                    },
+                    layout: {
+                        'line-join': 'round',
+                        'line-cap': 'round'
+                    },
+                    paint: {
+                        'line-color': color,
+                        'line-width': 5,
+                        'line-opacity': 1
+                    }
+                });
+            }
+            //Draw each end point
+            if(time != ''){
+                var mins = Math.floor(data.duration/60);
+                drawPopup(route[Math.round(route.length/2)], '<b>'+mins+' mins</b>');
+                var new_time = moment(time,'H:mm').add('m',mins).format('H:mm');
+                drawMarker(coords = end, popup = 'Expected arrival time <b>'+new_time+'</b>');
+                return new_time;
+            }
+            return null;
+        }
+        async function getRoutes(trajet){
+            if(trajet.length >= 2){
+                var res_time = start_time;
+                for (let i = 0; i < trajet.length-1; i++) {
+                    res_time = await drawRoute('route'+(trajet[i]+trajet[i+1]).toString().replaceAll('.', '').replaceAll(',', '')+'',trajet[i],trajet[i+1],color='#FFFFFF', time = res_time);
+                }
+                //Draw START point
+                drawMarker(coords = trajet[0], popup = 'Start time <b>'+start_time+'</b>');
+            }else{
+                console.log('Path is too short');
+            }
+        }
+
         map.on('load', () => {
             map.loadImage(
                 'https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png',
@@ -276,57 +444,94 @@
                         }
                     });
                 });
+            getRoutes(trajet);
         });
+
+        geocoderFrom.on('result', (event) => {
+            from = event.result.geometry.coordinates;
+            console.log(from);
+        });
+        geocoderTo.on('result', (event) => {
+            to = event.result.geometry.coordinates;
+        });
+        geocoderStop.on('result', (event) => {
+            stop = [event.result.text,event.result.geometry.coordinates];
+        });
+
         $(document).ready(function () {
-            // $('.mapbox-search').append(geocoder.onAdd(map));
-
-        });
-
-        $(document).on('click', '#search > div:first-child, #open-search', function () {
-            $('#search').toggleClass('hidden');
+            $('#search-inline').css('top','calc(-'+$('#search-inline').innerHeight()+'px + 2px)');
+            var btnHeight = $('#btn-switch').innerHeight()/2;
+            $('#btn-switch').css('top','calc(50% - '+btnHeight+'px)');
+            $('#stops-list').parent().css('max-height', $('#stops-list').parent().innerHeight()+'px');
         });
 
         $(document).on('click', '#add-stop', function (e) {
             e.preventDefault();
-            var stop = $('#stop').val();
-            if (stop != '' && stop != '') {
-                if ($("#stops-list li").length < 6) {
-                    $('#stops-list').append('<li> <div class="flex items-center pl-2 mt-1"> <div class="flex flex-grow"> <svg xmlns="http://www.w3.org/2000/svg" class="w-15" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /> </svg> <span class="text-xs w-full px-1 text-gray-700">' + stop + '</span> </div> <button type="button" class="rounded remove-stop text-xs py-1 px-2 bg-red-100">Remove<button> </div> </li>');
-                    $('#stop').val('');
-                    if ($("#stops-list li").length == 6) {
-                        $("#stops-list li:first-child").addClass('hidden');
-                    }
-                }
-            }
+            $('#stops-list').html('');
+            $.each(stops, function( index, value ) {
+                $('#stops-list').append('<li> <div class="flex items-center pl-2 mt-1"> <div class="flex flex-grow"> <span class="text-xs w-full px-1">' + value[0] + '</span> </div> <button type="button" class="rounded remove-stop text-xs py-1 px-2 text-gray-700 bg-red-100">Remove<button> </div> </li>');
+            });
+            // console.log();
+            // var stop = $('#stop').val();
+            // if (stop != '' && stop != '') {
+            //     var length_ul = $("#stops-list li").length;
+            //     if(length_ul == 1 && $("#stops-list li:first-child").html() == "No stops added"){
+            //         $("#stops-list li:first-child").remove(); 
+            //     }
+            //     if (length_ul < 6) {
+            //         $('#stops-list').append('<li> <div class="flex items-center pl-2 mt-1"> <div class="flex flex-grow"> <span class="text-xs w-full px-1">' + stop + '</span> </div> <button type="button" class="rounded remove-stop text-xs py-1 px-2 text-gray-700 bg-red-100">Remove<button> </div> </li>');
+            //         $('#stop').val('');
+            //     }
+            // }
         });
 
         $(document).on('click', '.remove-stop', function (e) {
             e.preventDefault();
             $(this).closest('li').remove();
             $("#stops-list li:first-child").removeClass('hidden');
+            if($("#stops-list li").length == 0){
+                $('#stops-list').append('<li class="text-center">No stops added</li>');
+            }
         });
 
         $(document).on('click', '#btn-switch', function (e) {
             e.preventDefault();
-            var from = $('#from').val();
-            var to = $('#to').val();
-            if (from != '' && to != '') {
-                $(this).toggleClass('flip');
-                $('#from').val(to);
-                $('#to').val(from);
+            if(from != null && to != null){
+                if (from != '' && to != '') {
+                    $(this).toggleClass('flip');
+                    $('#from').val(to);
+                    $('#to').val(from);
+                    var switchEle = $('#search-inline > form > div:first-child > div:first-child > div');
+                    $('#search-inline > form > div:first-child > div:first-child').html($('#search-inline > form > div:first-child > div:last-child > div'));
+                    $('#search-inline > form > div:first-child > div:last-child').html(switchEle);
+                    var switchVal = from;
+                    from = to;
+                    to = switchVal;
+                }
             }
         });
 
-        $(document).on('submit', '#search form', function (e) {
+        $(document).on('submit', '#search-inline form', function (e) {
             e.preventDefault();
-            $('#search').toggleClass('hidden');
             $('#results').addClass('active');
         });
 
+        //Result card functions
         $(document).on('click', '.more-info', function (e) {
             e.preventDefault();
             $(this).toggleClass('active');
             $(this).next().toggleClass('open');
+        });
+
+        //Modals functions
+        $(document).on('click','.btn-open-modal',function(e){
+            e.preventDefault();
+            $('.modal').addClass('hidden');
+            $('#'+$(this).data('modalid')).toggleClass('hidden');
+        });
+        $(document).on('click','.modal > div:first-child',function(e){
+            e.preventDefault();
+            $(this).parents('.modal').addClass('hidden');
         });
     </script>
     @auth
@@ -385,3 +590,8 @@
     @endauth
 @endpush
 
+
+{{-- Operateur de transport OT
+Autorite orginasitrice de mobilite AOM 
+
+Add trains + scheduling --}}
