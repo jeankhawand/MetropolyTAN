@@ -140,7 +140,7 @@
                 </a>
             @endguest
             @auth
-                <button class="btn-open-modal w-auto h-auto text-white hover:text-green-300 transition mr-2" data-modalid="choose-add">
+                <button class="btn-open w-auto h-auto text-white hover:text-green-300 transition mr-2" wire:click="$emit('fireClick')">
                     <x-heroicon-o-plus-circle class="w-6 h-6"/>
                 </button>
 
@@ -173,60 +173,79 @@
 
     <style>
         /* width */
-        #stops-div::-webkit-scrollbar {
+        .place-input > div.absolute::-webkit-scrollbar, #stops-div::-webkit-scrollbar {
             width: 2px;
         }
 
         /* Track */
-        #stops-div::-webkit-scrollbar-track {
+        .place-input > div.absolute::-webkit-scrollbar-track, #stops-div::-webkit-scrollbar-track {
             background: #f1f1f1; 
             border-radius: 25px;
         }
 
         /* Handle */
-        #stops-div::-webkit-scrollbar-thumb {
+        .place-input > div.absolute::-webkit-scrollbar-thumb, #stops-div::-webkit-scrollbar-thumb {
             background: #888; 
             border-radius: 25px;
         }
 
         /* Handle on hover */
-        #stops-div::-webkit-scrollbar-thumb:hover {
+        .place-input > div.absolute::-webkit-scrollbar-thumb:hover, #stops-div::-webkit-scrollbar-thumb:hover {
             background: #555; 
+        }
+
+        .place-input > div.absolute{
+            bottom: 100%;
+            max-height: 0px;
+            overflow-y: auto;
+        }
+
+        .place-input ul li{
+            padding:5px 10px
         }
     </style>
 
     <div id="results" class="fixed inset-x-0 bottom-0 bg-gray-500 z-30 transform transition delay-75 translate-y-full p-5">
         <div id="search-inline" class="absolute flex p-5 inset-x-0 bg-gray-500 rounded-t-3xl">
-            <form class="grid grid-cols-1 md:grid-cols-4 gap-4 w-full">
+            <form autocomplete="off" class="grid grid-cols-1 md:grid-cols-4 gap-4 w-full">
                 <div class="relative mb-4 md:mb-0">
-                    {{-- <input
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline"
-                        id="from" type="text" placeholder="From" required> --}}
-                        <div class="mb-2">
-                            <div class="shadow appearance-none rounded w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="from-geocoder"></div>
+                    <div class="relative place-input">
+                        <input type="hidden" name="from" value="" required/>
+                        <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline" name="from-text" placeholder="From" autocomplete="off"/>
+                        <div class="absolute bg-white inset-x-0">
+                            <ul class="list-unstyle">
+                            </ul>
                         </div>
+                    </div>
                     <button type="button" id="btn-switch" class="absolute bg-gray-500 border border-solid border-white -left-3 p-1 z-10 transition rounded-full">
                         <x-heroicon-o-switch-vertical class="w-5 h-5 text-white"/>
                     </button>
-                    {{-- <input
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="to" type="text" placeholder="To" required> --}}
-                        <div>
-                            <div class="shadow appearance-none rounded w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="to-geocoder"></div>
+                    <div class="relative place-input">
+                        <input type="hidden" name="to" value="" required/>
+                        <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="to-text" placeholder="To" autocomplete="off"/>
+                        <div class="absolute bg-white inset-x-0">
+                            <ul class="list-unstyle">
+                            </ul>
                         </div>
+                    </div>
                 </div>
                 <div class="flex flex-col justify-between">
                     <label class="py-2 text-white">Add your stops:</label>
                     <div class="grid grid-cols-3 gap-2">
-                        <input class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none col-span-2 focus:shadow-outline"
-                            id="stop" type="text" placeholder="Type here">
-                        {{-- <div class="col-span-2 shadow appearance-none rounded text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="stop-geocoder"></div> --}}
+                        <div class="relative place-input col-span-2">
+                            <input type="hidden" name="stop" value="" required/>
+                            <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="stop-text" placeholder="Type here" autocomplete="off"/>
+                            <div class="absolute bg-white inset-x-0">
+                                <ul class="list-unstyle">
+                                </ul>
+                            </div>
+                        </div>
                         <button type="button" id="add-stop" class="rounded text-sm py-1 px-2 bg-green-100">
                             Add stop
                         </button>
                     </div>
                 </div>
-                <div id="stops-div" class="flex max-h-full overflow-y-auto">
+                <div id="stops-div" class="flex max-h-full overflow-y-auto overflow-x-hidden">
                     <ul id="stops-list" class="list-unstyle text-sm text-white w-full">
                         <li class="text-center">No stops added</li>
                     </ul>
@@ -257,25 +276,7 @@
         </div>
     </div>
 
-    <div id="choose-add" class="modal fixed bg-gray-500 bg-opacity-50 inset-0 z-30 flex items-center justify-center drop-shadow-md hidden">
-        <div class="absolute inset-0 z-0"></div>
-        <div class="bg-white p-5 rounded-3xl z-10 grid grid-cols-2 gap-3">
-            <button class="btn-open-modal shadow text-gray-500 rounded-3xl text-xs py-2 px-3 bg-green-200 hover:bg-green-300 transition" data-modalid="add-offer">Add Offer</button>
-            <button class="btn-open-modal shadow text-gray-500 rounded-3xl text-xs py-2 px-3 bg-green-200 hover:bg-green-300 transition" data-modalid="add-demand">Add Demand</button>
-        </div>
-    </div>
-    <div id="add-offer" class="modal fixed bg-gray-500 bg-opacity-50 inset-0 z-30 flex items-center justify-center drop-shadow-md hidden">
-        <div class="absolute inset-0 z-0"></div>
-        <div class="bg-white md:w-1/3 w-11/12 p-5 rounded-3xl z-10">
-            Add offer
-        </div>
-    </div>
-    <div id="add-demand" class="modal fixed bg-gray-500 bg-opacity-50 inset-0 z-30 flex items-center justify-center drop-shadow-md hidden">
-        <div class="absolute inset-0 z-0"></div>
-        <div class="bg-white md:w-1/3 w-11/12 p-5 rounded-3xl z-10">
-            Add demand
-        </div>
-    </div>
+    <livewire:choose-modal/>
 
     <livewire:update-user-coordinates/>
 @endsection
@@ -288,10 +289,41 @@
     <script src='https://api.mapbox.com/mapbox-gl-js/v2.6.0/mapbox-gl.js'></script>
     <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
     <script>
-        var from = null;
-        var to = null;
+        $(document).ready(function () {
+            $('#search-inline').css('top','calc(-'+$('#search-inline').innerHeight()+'px + 2px)');
+            var btnHeight = $('#btn-switch').innerHeight()/2;
+            $('#btn-switch').css('top','calc(50% - '+btnHeight+'px)');
+            $('#stops-list').parent().css('max-height', $('#stops-list').parent().innerHeight()+'px');
+        });
+        
         var stops = [];
         var stop;
+
+        //Custom input places
+        $(document).on('keyup','.place-input > input[type=text]',function(e){
+            $(this).next().css('max-height','200px');
+            var ul = $(this).next().children('ul');
+            ul.html('<li>Loading ...</li>');
+            $.ajax("https://photon.komoot.io/api/?q="+encodeURIComponent($(this).val())+"&lat=6.797655&lon=47.509381")
+            .done(function(data) {
+                ul.html('');
+                $.each(data.features, function(i, item) {
+                    ul.append('<li class="hover:bg-gray-200 cursor-pointer" data-coords="'+item.geometry.coordinates+'">'+item.properties.name+'</li>');
+                });
+            })
+        });
+        $(document).on('focus','.place-input > input[type=text]',function(e){
+            $(this).next().css('max-height','200px');
+        });
+        $(document).on('click','.place-input ul li',function(e){
+            e.preventDefault();
+            $(this).attr('selected','true');
+            var coords = $(this).data('coords');
+            var place = $(this).html();
+            $(this).parent().parent().css('max-height','0px');
+            $(this).parents('.place-input').children('input[type=text]').val(place);
+            $(this).parents('.place-input').children('input[type=hidden]').val(coords);
+        });
 
         mapboxgl.accessToken = '{{config("services.mapbox.public_token")}}';
 
@@ -301,42 +333,6 @@
             center: [6.818934, 47.510879],
             zoom: 12
         });
-        const geocoderFrom = new MapboxGeocoder({
-            accessToken: mapboxgl.accessToken,
-            mapboxgl: mapboxgl,
-            marker: false,
-            placeholder: 'From',
-            flyTo: false,
-            proximity: {
-                longitude: 6.797655,
-                latitude: 47.509381
-            }
-        });
-        const geocoderTo = new MapboxGeocoder({
-            accessToken: mapboxgl.accessToken,
-            mapboxgl: mapboxgl,
-            marker: false,
-            placeholder: 'To',
-            flyTo: false,
-            proximity: {
-                longitude: 6.797655,
-                latitude: 47.509381
-            }
-        });
-        const geocoderStop = new MapboxGeocoder({
-            accessToken: mapboxgl.accessToken,
-            mapboxgl: mapboxgl,
-            marker: false,
-            placeholder: 'Type here',
-            flyTo: false,
-            proximity: {
-                longitude: 6.797655,
-                latitude: 47.509381
-            }
-        });
-        $('#from-geocoder').append(geocoderFrom.onAdd(map));
-        $('#to-geocoder').append(geocoderTo.onAdd(map));
-        $('#stop-geocoder').append(geocoderStop.onAdd(map));
 
         const trajet = [[6.801092,47.494105],[6.795333,47.511371],[6.757310,47.568328],[6.835759,47.598260],[6.857846,47.636139]]
         var start_time = moment().format('H:mm');
@@ -446,71 +442,48 @@
                 });
             getRoutes(trajet);
         });
-
-        geocoderFrom.on('result', (event) => {
-            from = event.result.geometry.coordinates;
-            console.log(from);
-        });
-        geocoderTo.on('result', (event) => {
-            to = event.result.geometry.coordinates;
-        });
-        geocoderStop.on('result', (event) => {
-            stop = [event.result.text,event.result.geometry.coordinates];
-        });
-
-        $(document).ready(function () {
-            $('#search-inline').css('top','calc(-'+$('#search-inline').innerHeight()+'px + 2px)');
-            var btnHeight = $('#btn-switch').innerHeight()/2;
-            $('#btn-switch').css('top','calc(50% - '+btnHeight+'px)');
-            $('#stops-list').parent().css('max-height', $('#stops-list').parent().innerHeight()+'px');
-        });
-
+        
+        //Search form functions
         $(document).on('click', '#add-stop', function (e) {
             e.preventDefault();
-            $('#stops-list').html('');
-            $.each(stops, function( index, value ) {
-                $('#stops-list').append('<li> <div class="flex items-center pl-2 mt-1"> <div class="flex flex-grow"> <span class="text-xs w-full px-1">' + value[0] + '</span> </div> <button type="button" class="rounded remove-stop text-xs py-1 px-2 text-gray-700 bg-red-100">Remove<button> </div> </li>');
-            });
-            // console.log();
-            // var stop = $('#stop').val();
-            // if (stop != '' && stop != '') {
-            //     var length_ul = $("#stops-list li").length;
-            //     if(length_ul == 1 && $("#stops-list li:first-child").html() == "No stops added"){
-            //         $("#stops-list li:first-child").remove(); 
-            //     }
-            //     if (length_ul < 6) {
-            //         $('#stops-list').append('<li> <div class="flex items-center pl-2 mt-1"> <div class="flex flex-grow"> <span class="text-xs w-full px-1">' + stop + '</span> </div> <button type="button" class="rounded remove-stop text-xs py-1 px-2 text-gray-700 bg-red-100">Remove<button> </div> </li>');
-            //         $('#stop').val('');
-            //     }
-            // }
+            var stop = $('input[name=stop]').val();
+            var stop_text = $('input[name=stop-text]').val();
+            if(stop != '' && stop_text != ''){
+                $('#stops-list').html('');
+                stops.push([stop_text,stop]);
+                $.each(stops, function( index, value ) {
+                    $('#stops-list').append('<li> <div class="flex items-center pl-2 mt-1"> <div class="flex flex-grow"> <span class="text-xs w-full px-1">' + value[0] + '</span> </div> <button data-stop="'+value[0]+'" type="button" class="rounded remove-stop text-xs py-1 px-2 text-gray-700 bg-red-100">Remove<button> </div> </li>');
+                });
+                $('input[name=stop]').val('');
+                $('input[name=stop-text]').val('');
+            }
         });
-
         $(document).on('click', '.remove-stop', function (e) {
             e.preventDefault();
+            var stop = $(this).data('stop');
+            var i;
+            $.each(stops, function( index, value ) {
+                if(value[0]==stop){
+                    i = index;
+                }
+            });
+            stops.splice(i,1);
             $(this).closest('li').remove();
-            $("#stops-list li:first-child").removeClass('hidden');
             if($("#stops-list li").length == 0){
                 $('#stops-list').append('<li class="text-center">No stops added</li>');
             }
         });
-
         $(document).on('click', '#btn-switch', function (e) {
             e.preventDefault();
-            if(from != null && to != null){
-                if (from != '' && to != '') {
-                    $(this).toggleClass('flip');
-                    $('#from').val(to);
-                    $('#to').val(from);
-                    var switchEle = $('#search-inline > form > div:first-child > div:first-child > div');
-                    $('#search-inline > form > div:first-child > div:first-child').html($('#search-inline > form > div:first-child > div:last-child > div'));
-                    $('#search-inline > form > div:first-child > div:last-child').html(switchEle);
-                    var switchVal = from;
-                    from = to;
-                    to = switchVal;
-                }
-            }
+            var from = $('input[name=from]').val();
+            var from_text = $('input[name=from-text]').val();
+            var to = $('input[name=to]').val();
+            var to_text = $('input[name=to-text]').val();
+            $('input[name=from]').val(to);
+            $('input[name=from-text]').val(to_text);
+            $('input[name=to]').val(from);
+            $('input[name=to-text]').val(from_text);
         });
-
         $(document).on('submit', '#search-inline form', function (e) {
             e.preventDefault();
             $('#results').addClass('active');
@@ -594,4 +567,6 @@
 {{-- Operateur de transport OT
 Autorite orginasitrice de mobilite AOM 
 
-Add trains + scheduling --}}
+Add trains + scheduling 
+
+sendCommand(SecurityInterstitialCommandId.CMD_PROCEED)--}}
