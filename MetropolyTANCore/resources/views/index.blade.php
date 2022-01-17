@@ -519,6 +519,8 @@
                     longitude
                 }
                 if (position.latitude > oldposition.latitude && position.longitude > oldposition.latitude) {
+                    $('input[name=from]').val(latitude+','+longitude);
+                    $('input[name=from-text]').val('Your location');
                     Livewire.emit('updateUserCoordinates', JSON.stringify(position), '{{auth()->user()->id}}')
                 }
 
