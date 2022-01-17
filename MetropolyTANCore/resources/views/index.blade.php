@@ -6,9 +6,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap"
           rel="stylesheet">
     <link href='https://api.mapbox.com/mapbox-gl-js/v2.6.0/mapbox-gl.css' rel='stylesheet'/>
-    <link rel="stylesheet"
-          href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css"
-          type="text/css">
+    
     <style>
         body {
             font-family: 'Outfit', sans-serif;
@@ -127,20 +125,18 @@
 @endpush
 
 @section('content')
-    <header
-        class="fixed flex inset-x-0 top-0 z-10 justify-center py-3 text-gray-200 bg-gray-500 bg-opacity-50 rounded-b-3xl">
+    <header class="fixed flex inset-x-0 top-0 z-10 justify-center py-3 text-gray-200 bg-gray-500 bg-opacity-50 rounded-b-3xl">
         <div>
             <img src="{{URL::asset('/images/logo/full-logo-white.png')}}" alt="MetropolYTAN Logo" width="60"/>
         </div>
         <div class="absolute flex items-center inset-y-0 right-4">
             @guest
-                {{--                @livewire('mode-toggle')--}}
                 <a class="flex hover:text-green-300 transition h-6 w-6" href="{{route('login')}}">
                     <x-heroicon-o-user-circle class="w-6 h-6"/>
                 </a>
             @endguest
             @auth
-                <button class="btn-open w-auto h-auto text-white hover:text-green-300 transition mr-2" wire:click="$emit('fireClick')">
+                <button class="w-auto h-auto text-white hover:text-green-300 transition mr-2" onclick="Livewire.emit('openModal', 'choose-adding')">
                     <x-heroicon-o-plus-circle class="w-6 h-6"/>
                 </button>
 
@@ -275,19 +271,18 @@
             @include('components.card',['data' => 'Jean Khawand'])
         </div>
     </div>
-
-    <livewire:choose-modal/>
-
     <livewire:update-user-coordinates/>
 @endsection
-
+{{-- {{route('name')}} --}}
 @push('scripts')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
             integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script src='https://api.mapbox.com/mapbox-gl-js/v2.6.0/mapbox-gl.js'></script>
-    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/2.8.2/alpine.js"></script>
+
     <script>
         $(document).ready(function () {
             $('#search-inline').css('top','calc(-'+$('#search-inline').innerHeight()+'px + 2px)');
@@ -326,7 +321,6 @@
         });
 
         mapboxgl.accessToken = '{{config("services.mapbox.public_token")}}';
-
         const map = new mapboxgl.Map({
             container: 'map',
             style: 'mapbox://styles/mapbox/navigation-night-v1',
@@ -494,17 +488,6 @@
             e.preventDefault();
             $(this).toggleClass('active');
             $(this).next().toggleClass('open');
-        });
-
-        //Modals functions
-        $(document).on('click','.btn-open-modal',function(e){
-            e.preventDefault();
-            $('.modal').addClass('hidden');
-            $('#'+$(this).data('modalid')).toggleClass('hidden');
-        });
-        $(document).on('click','.modal > div:first-child',function(e){
-            e.preventDefault();
-            $(this).parents('.modal').addClass('hidden');
         });
     </script>
     @auth
