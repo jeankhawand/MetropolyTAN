@@ -136,9 +136,11 @@
                 </a>
             @endguest
             @auth
-                <button class="w-auto h-auto text-white hover:text-green-300 transition mr-2" onclick="Livewire.emit('openModal', 'choose-adding')">
-                    <x-heroicon-o-plus-circle class="w-6 h-6"/>
-                </button>
+                @hasanyrole('driver')
+                    <button class="w-auto h-auto text-white hover:text-green-300 transition mr-2" onclick="Livewire.emit('openModal', 'choose-adding')">
+                        <x-heroicon-o-plus-circle class="w-6 h-6"/>
+                    </button>
+                @endhasanyrole
 
                 <div x-data="{ dropdownOpen: false }">
                     <button @click="dropdownOpen = !dropdownOpen"
@@ -198,6 +200,10 @@
 
         .place-input ul li{
             padding:5px 10px
+        }
+
+        .place-input.bot-result > div.absolute{
+            bottom:unset;
         }
     </style>
 
