@@ -70,7 +70,7 @@
         }
 
         .result-details .details > p:first-child {
-            width: 40px;
+            min-width: 47px;
         }
 
         .result-details .details:first-child > span:nth-child(2)::after {
@@ -208,7 +208,12 @@
     </style>
 
     <div id="results" class="fixed inset-x-0 bottom-0 bg-gray-500 z-30 transform transition delay-75 translate-y-full p-5">
-        <div id="search-inline" class="absolute flex p-5 inset-x-0 bg-gray-500 rounded-t-3xl">
+        <div id="search-inline" class="absolute flex flex-col px-5 pb-5 pt-3 inset-x-0 bg-gray-500 rounded-t-3xl">
+            <div class="w-full flex justify-center btn-toggle">
+                <button class="mb-2">
+                    <x-heroicon-o-chevron-up class="w-5 h-5 text-white"/>
+                </button>
+            </div>
             <form autocomplete="off" class="grid grid-cols-1 md:grid-cols-4 gap-4 w-full">
                 <div class="relative mb-4 md:mb-0">
                     <div class="relative place-input">
@@ -232,11 +237,11 @@
                     </div>
                 </div>
                 <div class="flex flex-col justify-between">
-                    <label class="py-2 text-white">Add your stops:</label>
+                    <input type="datetime-local" class="col-span-3 mb-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="start-time" value="<?php echo date('Y-m-d').'T'.date('H:i'); ?>" min="<?php echo date('Y-m-d').'T'.date('H:i'); ?>" required/>
                     <div class="grid grid-cols-3 gap-2">
                         <div class="relative place-input col-span-2">
                             <input type="hidden" name="stop" value="" required/>
-                            <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="stop-text" placeholder="Type here" autocomplete="off"/>
+                            <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="stop-text" placeholder="Type your stop" autocomplete="off"/>
                             <div class="absolute bg-white inset-x-0">
                                 <ul class="list-unstyle">
                                 </ul>
@@ -274,7 +279,55 @@
             </form>
         </div>
         <div class="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            @include('components.card',['data' => 'Jean Khawand'])
+            @php
+                $data = [
+                    [
+                        'name' => 'Steve Jobs', 
+                        'star' => '4.9', 
+                        'tickets' => '4', 
+                        'from' => ['Résidence Portes du Juras', [6.801112,47.494109], '11:01'], 
+                        'to' => ['Belfort Centre', [6.8616517,47.6387956], '14:25'], 
+                        'details' => [
+                            ['Montbéliard Centre Ville',[6.797810,47.511684]],
+                            ['Musée de L\'Aventure Peugeot',[6.8313153,47.5162355]]
+                        ]
+                    ],
+                    [
+                        'name' => 'Tim Cook', 
+                        'star' => '4.1', 
+                        'tickets' => '2', 
+                        'from' => ['Résidence Portes du Juras', [6.801112,47.494109], '13:00'], 
+                        'to' => ['Belfort Centre', [6.8616517,47.6387956], '15:25'], 
+                        'details' => [
+                            ['Direct route with no stops',null]
+                        ]
+                    ],
+                    [
+                        'name' => 'Dominique Roussel', 
+                        'star' => '3.5', 
+                        'tickets' => '3', 
+                        'from' => ['UBFC', [6.805531,47.496070], '09:00'], 
+                        'to' => ['UTBM', [6.8550383,47.6388501], '12:07'], 
+                        'details' => [
+                            ['Héricourt',[6.764904,47.579390]]
+                        ]
+                    ],
+                    [
+                        'name' => 'Albert Issa', 
+                        'star' => '2.9', 
+                        'tickets' => '3', 
+                        'from' => ['E.Leclerc', [6.8095045,47.4966668], '11:00'], 
+                        'to' => ['Gare de Belfort', [47.6321231,6.844517], '15:10'], 
+                        'details' => [
+                            ['Montbéliard Centre Ville',[6.797810,47.511684]]
+                        ]
+                    ]
+                ]
+            @endphp
+
+            @foreach($data as $card)
+                @include('components.card',['data' => $card])
+            @endforeach
         </div>
     </div>
     <livewire:update-user-coordinates/>
@@ -309,7 +362,17 @@
             .done(function(data) {
                 ul.html('');
                 $.each(data.features, function(i, item) {
-                    ul.append('<li class="hover:bg-gray-200 cursor-pointer" data-coords="'+item.geometry.coordinates+'">'+item.properties.name+'</li>');
+                    var street = item.properties.street;
+                    var city = item.properties.city;
+                    var country = item.properties.country;
+                    var additional_info = '';
+                    if(street != undefined)
+                        additional_info += street+', '
+                    if(city != undefined)
+                        additional_info += city+', '
+                    if(country != undefined)
+                        additional_info += country
+                    ul.append('<li class="hover:bg-gray-200 cursor-pointer" data-coords="'+item.geometry.coordinates+'" data-info="'+item.properties.name+'">'+item.properties.name+'<br/><small>'+additional_info+'</small></li>');
                 });
             })
         });
@@ -320,9 +383,10 @@
             e.preventDefault();
             $(this).attr('selected','true');
             var coords = $(this).data('coords');
+            var info = $(this).data('info');
             var place = $(this).html();
             $(this).parent().parent().css('max-height','0px');
-            $(this).parents('.place-input').children('input[type=text]').val(place);
+            $(this).parents('.place-input').children('input[type=text]').val(info);
             $(this).parents('.place-input').children('input[type=hidden]').val(coords);
         });
 
@@ -334,8 +398,26 @@
             zoom: 12
         });
 
-        const trajet = [[6.801092,47.494105],[6.795333,47.511371],[6.757310,47.568328],[6.835759,47.598260],[6.857846,47.636139]]
-        var start_time = moment().format('H:mm');
+        // const trajet = [[6.801092,47.494105],[6.795333,47.511371],[6.757310,47.568328],[6.835759,47.598260],[6.857846,47.636139]]
+        // var start_time = moment().format('H:mm');
+
+        var currentMarkers=[];
+
+        //Draw on click
+        $(document).on('click','.see-on-map',function(e){
+            e.preventDefault();
+            $(this).html('<img src="/images/gifs/loading.gif" alt="loading" width="20"/>');
+            if (currentMarkers!==null) {
+                for (var i = currentMarkers.length - 1; i >= 0; i--) {
+                    currentMarkers[i].remove();
+                }
+            }
+            setTimeout(() => {
+                getRoutes($(this).data('coords'),moment($(this).data('time'),'H:mm').format('H:mm'));
+                $('#results').toggleClass('active');
+                $(this).html('See on map');
+            }, 2000);
+        });
 
         function drawPopup(coords, html){
             new mapboxgl.Popup({ closeButton: false,className: 'time-popup' })
@@ -343,15 +425,17 @@
             .setHTML(html)
             .addTo(map);
         }
-        function drawMarker(coords, popup = '', color = '#FEF349'){
+        function drawMarker(coords, popup = '', color = '#86efac'){
             const marker = new mapboxgl.Marker({ color: color, rotation: 0 })
             .setLngLat(coords)
             .addTo(map);
 
             if(popup != '')
                 marker.setPopup(new mapboxgl.Popup({ offset: 25,closeButton: false,className: 'time-popup' }).setHTML(popup)).togglePopup()
+
+            currentMarkers.push(marker);
         }
-        async function drawRoute(id, start, end, color = '#FEF349', time = '', profile = 'driving'){
+        async function drawRoute(id, start, end, color = '#FFFFFF', time = '', profile = 'driving'){
             //Profiles can be: driving-traffic | driving | walking | cycling
             const query = await fetch(
                 `https://api.mapbox.com/directions/v5/mapbox/${profile}/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`, {
@@ -400,7 +484,7 @@
             }
             return null;
         }
-        async function getRoutes(trajet){
+        async function getRoutes(trajet,start_time){
             if(trajet.length >= 2){
                 var res_time = start_time;
                 for (let i = 0; i < trajet.length-1; i++) {
@@ -440,7 +524,7 @@
                         }
                     });
                 });
-            getRoutes(trajet);
+            // getRoutes(trajet);
         });
         
         //Search form functions
@@ -487,6 +571,10 @@
         $(document).on('submit', '#search-inline form', function (e) {
             e.preventDefault();
             $('#results').addClass('active');
+        });
+        $(document).on('click', '.btn-toggle', function(e){
+            e.preventDefault();
+            $('#results').toggleClass('active');
         });
 
         //Result card functions
